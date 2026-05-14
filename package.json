@@ -1,0 +1,49 @@
+{
+  "name": "ashe-ra-wellness-journal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@ducanh2912/next-pwa": "^10.2.9",
+    "@hookform/resolvers": "^3.9.0",
+    "@mantine/core": "^7.13.4",
+    "@mantine/dates": "^7.13.4",
+    "@mantine/form": "^7.13.4",
+    "@mantine/hooks": "^7.13.4",
+    "@mantine/notifications": "^7.13.4",
+    "@prisma/client": "^5.22.0",
+    "@tabler/icons-react": "^3.21.0",
+    "@tanstack/react-query": "^5.59.16",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.11.13",
+    "framer-motion": "^11.11.11",
+    "lucide-react": "^0.454.0",
+    "next": "14.2.18",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.53.1",
+    "recharts": "^2.13.3",
+    "zod": "^3.23.8",
+    "zustand": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "14.2.18",
+    "postcss": "^8.4.47",
+    "postcss-preset-mantine": "^1.17.0",
+    "postcss-simple-vars": "^7.0.1",
+    "prisma": "^5.22.0",
+    "typescript": "^5.6.3"
+  }
+}

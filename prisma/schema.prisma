@@ -1,0 +1,214 @@
+// Ashe Ra Wellness Journal — Prisma schema (PRD §4)
+// Local dev uses SQLite. String[] is stored as JSON for SQLite compatibility;
+// switch provider to "postgresql" for Supabase deployment and replace the
+// `Json` array fields with `String[]`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String         @id @default(cuid())
+  email            String         @unique
+  displayName      String?
+  avatarUrl        String?
+  role             String         @default("client") // "client" | "coach"
+  coachId          String?        // FK → coach User.id
+  onboardedAt      DateTime?
+  journalStartDate DateTime?
+  milestones       String         @default("[]")
+  reminderHour     Int?
+  reminderEnabled  Boolean        @default(false)
+  createdAt        DateTime       @default(now())
+
+  entries          DailyEntry[]
+  monthlySetups    MonthlySetup[]
+  weeklyReviews    WeeklyReview[]
+  onboarding       Onboarding?
+  aiInsightCaches  AiInsightCache[]
+
+  coach            User?          @relation("CoachClients", fields: [coachId], references: [id])
+  clients          User[]         @relation("CoachClients")
+}
+
+model AiInsightCache {
+  id        String   @id @default(cuid())
+  userId    String
+  date      String   // YYYY-MM-DD — regenerated once per day
+  section   String   // "mood" | "sleep" | "symptoms" | "selfCare" | "overall"
+  text      String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, section])
+  @@index([userId, date])
+}
+
+model DailyEntry {
+  id            String  @id @default(cuid())
+  userId        String
+  date          String  // ISO "YYYY-MM-DD"
+
+  // Mood / Body
+  mood          Int?
+  moodEmoji     String?
+  energyLevel   Int?
+  stressLevel   Int?
+  bodyFeelings  String  @default("[]") // JSON array
+
+  // Sleep
+  sleepHours    Float?
+  sleepQuality  String?
+
+  // Hydration
+  waterCups     Int?
+
+  // Nutrition
+  breakfast     String?
+  lunch         String?
+  dinner        String?
+  snacks        String?
+  calProtein    String?
+  herbalTeas    String  @default("[]")
+  bodyResponse  String?
+
+  // Gut
+  bowelTexture  String?
+  bowelEase     String?
+  afterMeals    String  @default("[]")
+
+  // Symptoms
+  symptoms      String  @default("[]")
+  symptomsExtra String?
+  symptomBetter String?
+  symptomWorse  String?
+
+  // Hormone & cycle
+  cyclePhase    String?
+  cycleMucus    String?
+  cycleMood     String?
+  libido        String?
+
+  // Skin
+  skinCondition String?
+
+  // Pain
+  painAreas     String  @default("[]")
+
+  // Movement
+  moveActivity  String?
+  moveDuration  Int?
+  moveIntensity String?
+  moveDuring    String?
+  moveAfter     String?
+
+  // Mind & emotional
+  mindFeel       String?
+  todayPracticed String  @default("[]")
+  stressedBy     String?
+  supportedBy    String?
+  selfCare       String  @default("[]")
+
+  // Reflection
+  gratitude     String?
+  proudOf       String?
+  notes         String?
+
+  // Meta
+  completedSections String  @default("[]")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+model MonthlySetup {
+  id           String  @id @default(cuid())
+  userId       String
+  monthNumber  Int     // 1–11
+  year         Int
+  month        Int     // 1–12
+
+  theme            String?
+  affirmation      String?
+  healthGoal       String?
+
+  symptomsFrequent String @default("[]")
+  nervousSystemSafe String?
+  bodyRelationship String?
+  limitingBelief   String?
+  stressLevels     String @default("[]") // Int[]
+  stressReactions  String?
+  stressSources    String?
+
+  bodyNeedsMore    String @default("[]")
+  foodsToReduce    String?
+  foodsMustHave    String?
+  nervousSupport   String @default("[]")
+  herbalSupports   String @default("[]")
+  calmingRitual    String?
+
+  selfCareFocus     String @default("[]")
+  priorityThisMonth String?
+
+  labResults     String?
+  supplements    String?
+  whatChanged    String  @default("[]")
+  bodyResponse   String?
+  nextVisitFocus String?
+
+  appointments    String  @default("[]")
+  selfCareActivity String?
+
+  createdAt    DateTime @default(now())
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, monthNumber])
+}
+
+model WeeklyReview {
+  id              String  @id @default(cuid())
+  userId          String
+  weekNumber      Int
+
+  focusThisWeek   String?
+  nonNegotiables  String?
+
+  nervousSystemSafe  String?
+  gratefulFor        String?
+  weekWins           String?
+  weekChallenges     String?
+  foodTrigger        String?
+  energySleepPattern String?
+  whatILearnt        String?
+  improvementNeeded  String?
+
+  createdAt    DateTime @default(now())
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekNumber])
+}
+
+model Onboarding {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  healingIntention String?
+  majorHealthGoal  String?
+  goalFeeling      String?
+  goalWhyItMatters String?
+  commitmentLetter String?
+  commitmentDate   DateTime?
+  nervousSystemSafe String?
+  bodyRelationship String  @default("[]")
+  completedAt      DateTime?
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
