@@ -9,6 +9,12 @@ export const dynamic = 'force-dynamic';
 const schema = z.object({
   enabled: z.boolean(),
   hour: z.number().int().min(0).max(23),
+  timezone: z
+    .string()
+    .max(64)
+    .regex(/^[A-Za-z0-9_+\-/]+$/, 'IANA timezone name required')
+    .nullable()
+    .optional(),
 });
 
 export async function PATCH(req: NextRequest) {
@@ -24,8 +30,9 @@ export async function PATCH(req: NextRequest) {
     data: {
       reminderEnabled: parsed.data.enabled,
       reminderHour: parsed.data.hour,
+      ...(parsed.data.timezone ? { timezone: parsed.data.timezone } : {}),
     },
-    select: { reminderEnabled: true, reminderHour: true },
+    select: { reminderEnabled: true, reminderHour: true, timezone: true },
   });
   return NextResponse.json(updated);
 }

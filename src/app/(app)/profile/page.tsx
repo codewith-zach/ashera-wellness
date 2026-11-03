@@ -42,6 +42,7 @@ export default async function ProfilePage() {
         <ReminderSettings
           initialEnabled={user.reminderEnabled}
           initialHour={user.reminderHour}
+          initialTimezone={user.timezone}
         />
 
         <Card radius="lg" p="lg" style={{ background: 'rgba(255,255,255,0.85)' }}>

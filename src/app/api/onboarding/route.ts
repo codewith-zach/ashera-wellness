@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
-import { readJsonObject, badRequest } from '@/lib/api';
+import { readJsonObject, badRequest, validationError } from '@/lib/api';
 import { onboardingSchema } from '@/lib/validations/entry';
 import { packArr } from '@/lib/utils/json-array';
 
@@ -13,12 +13,9 @@ export async function POST(req: NextRequest) {
   if (!json.ok) return badRequest('Invalid JSON body');
   const parsed = onboardingSchema.safeParse(json.body);
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'Invalid', issues: parsed.error.flatten() },
-      { status: 400 },
-    );
+    return validationError('Invalid onboarding', parsed.error);
   }
-  const { bodyRelationship, ...rest } = parsed.data;
+  const { bodyRelationship, timezone, ...rest } = parsed.data;
   const data = {
     ...rest,
     bodyRelationship: packArr(bodyRelationship),
@@ -32,7 +29,10 @@ export async function POST(req: NextRequest) {
   });
   await prisma.user.update({
     where: { id: user.id },
-    data: { onboardedAt: new Date() },
+    data: {
+      onboardedAt: new Date(),
+      ...(timezone ? { timezone } : {}),
+    },
   });
   return NextResponse.json({ ok: true });
 }

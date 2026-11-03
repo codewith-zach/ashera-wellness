@@ -7,19 +7,29 @@ import { useState } from 'react';
 interface Props {
   initialEnabled: boolean;
   initialHour: number | null;
+  initialTimezone: string | null;
 }
 
-export function ReminderSettings({ initialEnabled, initialHour }: Props) {
+export function ReminderSettings({
+  initialEnabled,
+  initialHour,
+  initialTimezone,
+}: Props) {
   const [enabled, setEnabled] = useState(initialEnabled);
   const [hour, setHour] = useState<number>(initialHour ?? 9);
   const [saving, setSaving] = useState(false);
+  const [timezone, setTimezone] = useState(
+    initialTimezone ?? 'UTC',
+  );
 
   async function save(next: { enabled: boolean; hour: number }) {
     setSaving(true);
+    // Capture the browser timezone on every save so it stays current.
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const res = await fetch('/api/users/reminders', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(next),
+      body: JSON.stringify({ ...next, timezone: tz }),
     });
     setSaving(false);
     if (!res.ok) {
@@ -30,11 +40,12 @@ export function ReminderSettings({ initialEnabled, initialHour }: Props) {
       });
       return;
     }
+    setTimezone(tz);
     notifications.show({
       color: 'sage',
       title: 'Updated 🌿',
       message: next.enabled
-        ? `We'll send a gentle nudge around ${next.hour}:00 UTC.`
+        ? `We'll send a gentle nudge around ${next.hour}:00 (${tz}).`
         : 'Daily reminders are paused.',
     });
   }
@@ -64,8 +75,8 @@ export function ReminderSettings({ initialEnabled, initialHour }: Props) {
           />
         </Group>
         <NumberInput
-          label="Send at hour (UTC)"
-          description="0 = midnight, 9 = 9am, 18 = 6pm. Local-time is coming with full auth."
+          label="Send at hour (your time)"
+          description={`Reminder timezone: ${timezone}`}
           min={0}
           max={23}
           value={hour}

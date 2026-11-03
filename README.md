@@ -6,7 +6,7 @@ A warm, sage-toned digital companion to the printed wellness journal — daily e
 
 ## What's in this slice
 
-- **Stack**: Next.js 14 (App Router) · TypeScript strict · Mantine v7 · Framer Motion · Prisma · Lucide icons · React Query
+- **Stack**: Next.js 16 (App Router, Turbopack) · React 19 · TypeScript strict · Mantine v7 · Framer Motion · Prisma · Lucide icons · React Query
 - **Brand theme** (PRD §2): sage palette, Playfair Display + DM Sans, sage-tinted shadows, rounded radii
 - **Schema** (PRD §4): full `User` / `DailyEntry` / `MonthlySetup` / `WeeklyReview` / `Onboarding` models — pointed at SQLite for local dev (string-array fields are JSON-packed for portability)
 - **Onboarding wizard** (PRD §6.1): 4 steps — welcome, 11-month healing intention, commitment letter, nervous-system baseline
@@ -20,7 +20,7 @@ A warm, sage-toned digital companion to the printed wellness journal — daily e
 - **Monthly setup wizard** (PRD §6.5): 7-step wizard with theme/affirmation, health snapshot, three stress sliders, food & nervous-system support, self-care focus, appointments, medical snapshot. Adopt the suggested affirmation or write your own. Saved affirmation surfaces on the dashboard.
 - **Weekly review** (PRD §6.4): sticky-note grid (washi-tape decorations, gentle tilts) covering focus, non-negotiables, nervous-system safety, gratitude, wins/challenges, food triggers, energy-sleep pattern, what learnt, where to grow.
 - **Streak milestones** (PRD §6.8): 7/14/21/30/60/90-day milestones — full-screen celebration overlay with floating petals + spring-pop emoji + brand affirmation. Newly-earned milestones persist on `User.milestones` so they only fire once. "Gentle return" card surfaces on dashboard when the user comes back after a 2+ day break.
-- **Email reminder scaffolding**: brand-styled HTML templates (daily, weekly, milestone), `/api/cron/reminders` cron handler protected by `CRON_SECRET`, hourly Vercel Cron config in `vercel.json`. Dry-runs and logs unless `RESEND_API_KEY` is set. Profile page lets the user toggle daily reminders + pick a UTC hour.
+- **Email reminder scaffolding**: brand-styled HTML templates (daily, weekly, milestone), `/api/cron/reminders` cron handler protected by `CRON_SECRET`, hourly Vercel Cron config in `vercel.json`. Dry-runs and logs unless `RESEND_API_KEY` is set. Reminders fire at the user's preferred hour in their own timezone (captured from the browser at onboarding, refreshed on the profile page; UTC when none is set).
 - **Animations** (PRD §5): reusable `fadeUp`, `staggerContainer/Item`, `pageTransition`, `springSoft`. Every animated component checks `useReducedMotion`.
 
 ## Deferred (later phases)
@@ -28,7 +28,6 @@ A warm, sage-toned digital companion to the printed wellness journal — daily e
 - **Auth**: a single dev user is auto-created (`you@ashera.local`). A later phase swaps this for Supabase magic-link auth. Production builds refuse to run with dev auth unless `ALLOW_DEV_AUTH=true` is explicitly set.
 - **Postgres / Supabase**: the schema is SQLite-friendly. Switching to Supabase needs `provider = "postgresql"` in `prisma/schema.prisma`, replacing the JSON-packed `String` array fields with native `String[]`, and the Supabase env vars.
 - **Real email delivery**: needs `RESEND_API_KEY`, `RESEND_FROM` (verified sender), `CRON_SECRET`, and `NEXT_PUBLIC_APP_URL` in `.env.local`. Without these, the cron handler runs in dry mode and logs intended sends.
-- **Per-user timezones**: reminder hours are interpreted in UTC until timezone support lands on the user model.
 
 ## Running locally
 

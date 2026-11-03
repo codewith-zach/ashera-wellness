@@ -24,6 +24,7 @@ model User {
   milestones       String         @default("[]")
   reminderHour     Int?
   reminderEnabled  Boolean        @default(false)
+  timezone         String? // IANA tz name, e.g. "Europe/Lisbon"; null = UTC
   createdAt        DateTime       @default(now())
 
   entries          DailyEntry[]

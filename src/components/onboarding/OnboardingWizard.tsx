@@ -61,10 +61,11 @@ export function OnboardingWizard({ displayName }: { displayName: string }) {
 
   async function submit() {
     setSubmitting(true);
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const res = await fetch('/api/onboarding', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, timezone }),
     });
     setSubmitting(false);
     if (res.ok) {
