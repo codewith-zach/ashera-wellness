@@ -6,6 +6,7 @@ import '@mantine/notifications/styles.css';
 import './globals.css';
 import { theme } from '@/theme';
 import { QueryProvider } from '@/components/providers/QueryProvider';
+import { RegisterSW } from '@/components/pwa/RegisterSW';
 
 export const metadata: Metadata = {
   title: {
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Notifications position="bottom-center" />
             <div id="main-content">{children}</div>
           </QueryProvider>
+          <RegisterSW />
         </MantineProvider>
       </body>
     </html>

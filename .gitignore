@@ -9,7 +9,3 @@ prisma/dev.db
 prisma/dev.db-journal
 .vercel
 next-env.d.ts
-public/fallback-*.js
-public/swe-worker-*.js
-public/workbox-*.js
-public/sw.js
