@@ -1,4 +1,4 @@
-import { Box, Container, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import { Box, Container, Group, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { unpackArr } from '@/lib/utils/json-array';
@@ -7,6 +7,7 @@ import {
   LazyMoodSleepScatter,
   LazyMonthlyComparison,
   LazyHormonePhaseRing,
+  LazyWellbeingRadar,
 } from '@/components/charts/lazy';
 import { PainBodyMap } from '@/components/charts/PainBodyMap';
 import { MotionFade } from '@/components/animations/MotionFade';
@@ -21,8 +22,9 @@ export default async function AdvancedInsightsPage() {
   const thisMonthStart = dayjs().startOf('month').format('YYYY-MM-DD');
   const lastMonthStart = dayjs().subtract(1, 'month').startOf('month').format('YYYY-MM-DD');
   const lastMonthEnd   = dayjs().startOf('month').format('YYYY-MM-DD');
+  const thirtyDaysAgo  = dayjs().subtract(29, 'day').format('YYYY-MM-DD');
 
-  const [allEntries, thisMonthEntries, lastMonthEntries] = await Promise.all([
+  const [allEntries, thisMonthEntries, lastMonthEntries, balanceEntries] = await Promise.all([
     prisma.dailyEntry.findMany({
       where: { userId: user.id },
       select: { date: true, mood: true, sleepHours: true, cyclePhase: true, painAreas: true },
@@ -36,10 +38,34 @@ export default async function AdvancedInsightsPage() {
       where: { userId: user.id, date: { gte: lastMonthStart, lt: lastMonthEnd } },
       select: { mood: true, sleepHours: true, waterCups: true, energyLevel: true, stressLevel: true },
     }),
+    prisma.dailyEntry.findMany({
+      where: { userId: user.id, date: { gte: thirtyDaysAgo } },
+      select: {
+        mood: true,
+        energyLevel: true,
+        stressLevel: true,
+        sleepHours: true,
+        waterCups: true,
+        selfCare: true,
+      },
+    }),
   ]);
 
   const avg = (xs: number[]) =>
     xs.length ? Number((xs.reduce((a, b) => a + b, 0) / xs.length).toFixed(2)) : null;
+
+  // Average of transform(value) across entries where the field is set.
+  function avgOf<K extends 'mood' | 'energyLevel' | 'stressLevel' | 'sleepHours' | 'waterCups'>(
+    entries: { [k in K]: number | null }[],
+    key: K,
+    transform: (v: number) => number,
+  ): number | null {
+    const values = entries
+      .map((e) => e[key])
+      .filter((v): v is number => v != null)
+      .map(transform);
+    return avg(values);
+  }
 
   const scatterData = allEntries.map((e) => ({
     date: e.date,
@@ -77,6 +103,45 @@ export default async function AdvancedInsightsPage() {
 
   const maxPain = Math.max(...Object.values(painCounts), 1);
 
+  // Balance radar: last 30 days, each dimension normalised to 0–100%.
+  const pct = (value: number | null) =>
+    value == null ? null : Math.round(Math.min(100, Math.max(0, value)));
+  const balanceData = [
+    {
+      axis: 'Mood',
+      score: pct(avgOf(balanceEntries, 'mood', (v) => ((v - 1) / 4) * 100)),
+    },
+    {
+      axis: 'Energy',
+      score: pct(avgOf(balanceEntries, 'energyLevel', (v) => ((v - 1) / 4) * 100)),
+    },
+    {
+      axis: 'Calm',
+      score: pct(avgOf(balanceEntries, 'stressLevel', (v) => ((5 - v) / 4) * 100)),
+    },
+    {
+      axis: 'Sleep',
+      score: pct(avgOf(balanceEntries, 'sleepHours', (v) => (v / 8) * 100)),
+    },
+    {
+      axis: 'Hydration',
+      score: pct(avgOf(balanceEntries, 'waterCups', (v) => (v / 8) * 100)),
+    },
+    {
+      axis: 'Self-care',
+      score:
+        balanceEntries.length === 0
+          ? null
+          : Math.round(
+              (balanceEntries.filter(
+                (e) => unpackArr(e.selfCare).length > 0,
+              ).length /
+                balanceEntries.length) *
+                100,
+            ),
+    },
+  ];
+
   return (
     <Container size="lg" py="lg">
       <Stack gap="xl">
@@ -91,6 +156,39 @@ export default async function AdvancedInsightsPage() {
             <Text c="sage.7" mt="xs">
               Correlation, cycles, and month-on-month progress — patterns that reveal themselves over time.
             </Text>
+          </Box>
+        </MotionFade>
+
+        <MotionFade delay={0.04}>
+          <Box style={{ gridColumn: '1 / -1' }}>
+            <ChartCard
+              title="Wellbeing balance"
+              emoji="🌿"
+              hint="Last 30 days · each dimension normalised to 100% — the shape shows what's thriving"
+            >
+              <Group
+                align="center"
+                gap="xl"
+                wrap="wrap"
+                justify="space-around"
+              >
+                <Stack gap={8} miw={170}>
+                  {balanceData.map((d) => (
+                    <Group key={d.axis} justify="space-between" wrap="nowrap" gap="sm">
+                      <Text fz="xs" c="sage.6">
+                        {d.axis}
+                      </Text>
+                      <Text fz="xs" c="sage.7" fw={500}>
+                        {d.score == null ? '—' : `${d.score}%`}
+                      </Text>
+                    </Group>
+                  ))}
+                </Stack>
+                <Box miw={300} maw={520} style={{ flex: 1 }}>
+                  <LazyWellbeingRadar data={balanceData} height={300} />
+                </Box>
+              </Group>
+            </ChartCard>
           </Box>
         </MotionFade>
 

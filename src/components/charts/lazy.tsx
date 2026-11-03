@@ -63,3 +63,8 @@ export const LazyHormonePhaseRing = dynamic(
   () => import('./HormonePhaseRing').then((m) => m.HormonePhaseRing),
   { loading: () => <ChartSkeleton height={240} />, ssr: false },
 );
+
+export const LazyWellbeingRadar = dynamic(
+  () => import('./WellbeingRadar').then((m) => m.WellbeingRadar),
+  { loading: () => <ChartSkeleton height={260} />, ssr: false },
+);
