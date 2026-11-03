@@ -9,12 +9,13 @@ export const dynamic = 'force-dynamic';
 export default async function JournalForDate({
   params,
 }: {
-  params: { date: string };
+  params: Promise<{ date: string }>;
 }) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(params.date)) notFound();
+  const { date } = await params;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) notFound();
   const user = await requireUser();
   const entry = await prisma.dailyEntry.findUnique({
-    where: { userId_date: { userId: user.id, date: params.date } },
+    where: { userId_date: { userId: user.id, date } },
   });
-  return <JournalForm date={params.date} initialEntry={entry ? toView(entry) : null} />;
+  return <JournalForm date={date} initialEntry={entry ? toView(entry) : null} />;
 }

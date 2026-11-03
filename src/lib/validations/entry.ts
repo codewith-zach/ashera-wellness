@@ -85,6 +85,12 @@ export const onboardingSchema = z.object({
     .nullable()
     .optional(),
   bodyRelationship: tags.default([]),
+  timezone: z
+    .string()
+    .max(64)
+    .regex(/^[A-Za-z0-9_+\-/]+$/, 'IANA timezone name required')
+    .nullable()
+    .optional(),
 });
 
 export type OnboardingInput = z.infer<typeof onboardingSchema>;

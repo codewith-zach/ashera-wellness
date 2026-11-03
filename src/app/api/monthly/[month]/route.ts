@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
-import { readJsonObject, badRequest } from '@/lib/api';
+import { readJsonObject, badRequest, validationError } from '@/lib/api';
 import { monthlySetupSchema } from '@/lib/validations/monthly';
 import { toMonthlyDb, toMonthlyView } from '@/lib/monthly-mapper';
 
@@ -15,10 +15,11 @@ function parseMonth(value: string) {
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { month: string } },
+  { params }: { params: Promise<{ month: string }> },
 ) {
+  const { month } = await params;
   const user = await requireUser();
-  const monthNumber = parseMonth(params.month);
+  const monthNumber = parseMonth(month);
   if (!monthNumber) return NextResponse.json({ setup: null }, { status: 400 });
   const setup = await prisma.monthlySetup.findUnique({
     where: { userId_monthNumber: { userId: user.id, monthNumber } },
@@ -28,20 +29,18 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { month: string } },
+  { params }: { params: Promise<{ month: string }> },
 ) {
+  const { month } = await params;
   const user = await requireUser();
-  const monthNumber = parseMonth(params.month);
+  const monthNumber = parseMonth(month);
   if (!monthNumber)
     return NextResponse.json({ error: 'Bad month' }, { status: 400 });
   const json = await readJsonObject(req);
   if (!json.ok) return badRequest('Invalid JSON body');
   const parsed = monthlySetupSchema.partial().safeParse({ ...json.body, monthNumber });
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'Invalid', issues: parsed.error.flatten() },
-      { status: 400 },
-    );
+    return validationError('Invalid monthly setup', parsed.error);
   }
   const { monthNumber: _ignored, ...rest } = parsed.data;
   const data = toMonthlyDb(rest);

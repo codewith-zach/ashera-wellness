@@ -1,7 +1,7 @@
 import { Box, Card, Container, Group, Stack, Text, Title } from '@mantine/core';
-import Link from 'next/link';
 import dayjs from 'dayjs';
 import { requireUser } from '@/lib/auth';
+import { LinkCard } from '@/components/ui/links';
 import { prisma } from '@/lib/db';
 import { toView } from '@/lib/entry-mapper';
 import { MOOD_OPTIONS } from '@/lib/data/options';
@@ -16,12 +16,13 @@ const PAGE_SIZE = 20;
 export default async function HistoryPage({
   searchParams,
 }: {
-  searchParams: { month?: string; mood?: string; page?: string };
+  searchParams: Promise<{ month?: string; mood?: string; page?: string }>;
 }) {
+  const sp = await searchParams;
   const user = await requireUser();
-  const month = searchParams.month && /^\d{4}-\d{2}$/.test(searchParams.month) ? searchParams.month : 'all';
-  const mood = searchParams.mood && /^[1-5]$/.test(searchParams.mood) ? searchParams.mood : 'all';
-  const page = Math.max(1, parseInt(searchParams.page ?? '1', 10) || 1);
+  const month = sp.month && /^\d{4}-\d{2}$/.test(sp.month) ? sp.month : 'all';
+  const mood = sp.mood && /^[1-5]$/.test(sp.mood) ? sp.mood : 'all';
+  const page = Math.max(1, parseInt(sp.page ?? '1', 10) || 1);
 
   const where: {
     userId: string;
@@ -111,9 +112,8 @@ export default async function HistoryPage({
                   const symptoms = e.symptoms.slice(0, 3).join(' · ');
                   const selfCare = e.selfCare.slice(0, 2).join(' · ');
                   return (
-                    <Card
+                    <LinkCard
                       key={e.id}
-                      component={Link}
                       href={`/journal/${e.date}`}
                       radius="lg"
                       p={{ base: 'md', sm: 'lg' }}
@@ -163,7 +163,7 @@ export default async function HistoryPage({
                           )}
                         </Stack>
                       </Group>
-                    </Card>
+                    </LinkCard>
                   );
                 })}
               </Stack>

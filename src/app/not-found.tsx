@@ -1,5 +1,5 @@
-import { Box, Button, Center, Container, Stack, Text, Title } from '@mantine/core';
-import Link from 'next/link';
+import { Box, Center, Container, Stack, Text, Title } from '@mantine/core';
+import { LinkButton } from '@/components/ui/links';
 
 export default function NotFound() {
   return (
@@ -32,8 +32,7 @@ export default function NotFound() {
               The link you followed doesn't lead anywhere right now. Your journal
               is still here, waiting patiently.
             </Text>
-            <Button
-              component={Link}
+            <LinkButton
               href="/dashboard"
               radius="xl"
               size="lg"
@@ -41,7 +40,7 @@ export default function NotFound() {
               gradient={{ from: 'sage.5', to: 'sage.7', deg: 135 }}
             >
               Back to the dashboard
-            </Button>
+            </LinkButton>
           </Stack>
         </Center>
       </Container>

@@ -1,4 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import type { ZodError } from 'zod';
+import { flattenError } from 'zod';
+
+export function badRequest(message: string) {
+  return NextResponse.json({ error: message }, { status: 400 });
+}
+
+export function validationError(message: string, error: ZodError) {
+  return NextResponse.json(
+    { error: message, issues: flattenError(error) },
+    { status: 400 },
+  );
+}
 
 /**
  * Parse a JSON request body and confirm it is a plain object. Returns
@@ -17,8 +30,4 @@ export async function readJsonObject(
   } catch {
     return { ok: false };
   }
-}
-
-export function badRequest(message: string) {
-  return NextResponse.json({ error: message }, { status: 400 });
 }

@@ -21,7 +21,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChipMulti } from '@/components/journal/ChipMulti';
 import { ChipSingle } from '@/components/journal/ChipSingle';
 import {
@@ -69,7 +69,7 @@ type Form = {
 function initial(setup: MonthlySetupView | null, suggested: string): Form {
   if (!setup) {
     return {
-      affirmation: '',
+      affirmation: suggested,
       affirmationMode: 'adopt',
       healthGoal: '',
       symptomsFrequent: [],
@@ -97,7 +97,7 @@ function initial(setup: MonthlySetupView | null, suggested: string): Form {
     };
   }
   return {
-    affirmation: setup.affirmation ?? '',
+    affirmation: setup.affirmation ?? suggested,
     affirmationMode: setup.affirmation && setup.affirmation !== suggested ? 'own' : 'adopt',
     healthGoal: setup.healthGoal ?? '',
     symptomsFrequent: setup.symptomsFrequent,
@@ -144,13 +144,6 @@ export function MonthlyWizard({ monthNumber, year, month, setup }: Props) {
   const [form, setForm] = useState<Form>(() => initial(setup, theme.affirmation));
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
-
-  // When user picks "adopt", auto-fill affirmation from theme.
-  useEffect(() => {
-    if (form.affirmationMode === 'adopt' && form.affirmation !== theme.affirmation) {
-      setForm((f) => ({ ...f, affirmation: theme.affirmation }));
-    }
-  }, [form.affirmationMode, theme.affirmation, form.affirmation]);
 
   const update = <K extends keyof Form>(k: K, v: Form[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
@@ -250,7 +243,13 @@ export function MonthlyWizard({ monthNumber, year, month, setup }: Props) {
                       radius="xl"
                       variant={form.affirmationMode === 'adopt' ? 'filled' : 'light'}
                       color="sage"
-                      onClick={() => update('affirmationMode', 'adopt')}
+                      onClick={() =>
+                        setForm((f) => ({
+                          ...f,
+                          affirmationMode: 'adopt',
+                          affirmation: theme.affirmation,
+                        }))
+                      }
                     >
                       Adopt suggested
                     </Button>

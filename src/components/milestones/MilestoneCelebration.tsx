@@ -2,7 +2,34 @@
 
 import { Button, Stack, Text } from '@mantine/core';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useState } from 'react';
 import type { Milestone } from '@/lib/milestones';
+
+const PETAL_EMOJIS = ['🌸', '🌿', '✿', '🌼'];
+
+interface FloatingPetal {
+  left: number;
+  dy: number;
+  dx: number;
+  rotate: number;
+  duration: number;
+  delay: number;
+  fontSize: number;
+  emojiIndex: number;
+}
+
+function buildFloatingPetals(count: number): FloatingPetal[] {
+  return Array.from({ length: count }, (_, i) => ({
+    left: Math.random() * 100,
+    dy: Math.random() * 200 + 100,
+    dx: (Math.random() - 0.5) * 200,
+    rotate: Math.random() * 720,
+    duration: 4 + Math.random(),
+    delay: Math.random() * 2,
+    fontSize: 22 + Math.random() * 14,
+    emojiIndex: i % PETAL_EMOJIS.length,
+  }));
+}
 
 interface Props {
   milestone: Milestone | null;
@@ -11,6 +38,9 @@ interface Props {
 
 export function MilestoneCelebration({ milestone, onDismiss }: Props) {
   const reduced = useReducedMotion();
+  // Random petal geometry is generated once per mount in a lazy initializer —
+  // impure calls there don't run during render.
+  const [petals] = useState(() => buildFloatingPetals(18));
 
   return (
     <AnimatePresence>
@@ -36,44 +66,40 @@ export function MilestoneCelebration({ milestone, onDismiss }: Props) {
         >
           {/* Background petals */}
           {!reduced &&
-            Array.from({ length: 18 }).map((_, i) => {
-              const left = Math.random() * 100;
-              const dy = Math.random() * 200 + 100;
-              return (
-                <motion.div
-                  key={i}
-                  initial={{
-                    opacity: 0,
-                    y: 0,
-                    x: 0,
-                    rotate: 0,
-                    scale: 0.6,
-                  }}
-                  animate={{
-                    opacity: [0, 1, 1, 0],
-                    y: dy,
-                    x: (Math.random() - 0.5) * 200,
-                    rotate: Math.random() * 720,
-                    scale: [0.6, 1, 0.9],
-                  }}
-                  transition={{
-                    duration: 4 + Math.random(),
-                    repeat: Infinity,
-                    delay: Math.random() * 2,
-                    ease: 'easeOut',
-                  }}
-                  style={{
-                    position: 'absolute',
-                    top: '15%',
-                    left: `${left}%`,
-                    fontSize: 22 + Math.random() * 14,
-                    pointerEvents: 'none',
-                  }}
-                >
-                  {['🌸', '🌿', '✿', '🌼'][i % 4]}
-                </motion.div>
-              );
-            })}
+            petals.map((p, i) => (
+              <motion.div
+                key={i}
+                initial={{
+                  opacity: 0,
+                  y: 0,
+                  x: 0,
+                  rotate: 0,
+                  scale: 0.6,
+                }}
+                animate={{
+                  opacity: [0, 1, 1, 0],
+                  y: p.dy,
+                  x: p.dx,
+                  rotate: p.rotate,
+                  scale: [0.6, 1, 0.9],
+                }}
+                transition={{
+                  duration: p.duration,
+                  repeat: Infinity,
+                  delay: p.delay,
+                  ease: 'easeOut',
+                }}
+                style={{
+                  position: 'absolute',
+                  top: '15%',
+                  left: `${p.left}%`,
+                  fontSize: p.fontSize,
+                  pointerEvents: 'none',
+                }}
+              >
+                {PETAL_EMOJIS[p.emojiIndex]}
+              </motion.div>
+            ))}
 
           <motion.div
             initial={{ scale: 0.7, y: 30 }}

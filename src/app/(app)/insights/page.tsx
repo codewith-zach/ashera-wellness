@@ -1,6 +1,6 @@
-import { Anchor, Box, Container, Group, SimpleGrid, Stack, Text, Title } from '@mantine/core';
-import Link from 'next/link';
+import { Box, Container, Group, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { requireUser } from '@/lib/auth';
+import { LinkAnchor } from '@/components/ui/links';
 import { prisma } from '@/lib/db';
 import { unpackArr } from '@/lib/utils/json-array';
 import { computeStreak } from '@/lib/utils/streak';
@@ -25,10 +25,11 @@ export const dynamic = 'force-dynamic';
 export default async function InsightsPage({
   searchParams,
 }: {
-  searchParams: { period?: string };
+  searchParams: Promise<{ period?: string }>;
 }) {
+  const sp = await searchParams;
   const user = await requireUser();
-  const period = periodFromQuery(searchParams.period ?? null);
+  const period = periodFromQuery(sp.period ?? null);
   const start = periodStart(period);
 
   const [allEntries, periodEntries] = await Promise.all([
@@ -167,9 +168,9 @@ export default async function InsightsPage({
                 Your healing journey
               </Title>
             </Box>
-            <Anchor component={Link} href="/insights/advanced" c="sage.6" fz="sm" style={{ whiteSpace: 'nowrap' }}>
+            <LinkAnchor href="/insights/advanced" c="sage.6" fz="sm" style={{ whiteSpace: 'nowrap' }}>
               Advanced →
-            </Anchor>
+            </LinkAnchor>
           </Group>
         </Box>
 

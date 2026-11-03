@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
-import { readJsonObject, badRequest } from '@/lib/api';
+import { readJsonObject, badRequest, validationError } from '@/lib/api';
 import { dailyEntrySchema } from '@/lib/validations/entry';
 import { toView, toDbWrite } from '@/lib/entry-mapper';
 import { computeStreak } from '@/lib/utils/streak';
@@ -16,10 +16,7 @@ export async function POST(req: NextRequest) {
   if (!json.ok) return badRequest('Invalid JSON body');
   const parsed = dailyEntrySchema.safeParse(json.body);
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'Invalid entry', issues: parsed.error.flatten() },
-      { status: 400 },
-    );
+    return validationError('Invalid entry', parsed.error);
   }
 
   const { date, ...rest } = parsed.data;

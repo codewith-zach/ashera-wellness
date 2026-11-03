@@ -29,21 +29,21 @@ export function CountUp({
   const inView = useInView(ref, { once: true, margin: '-30px' });
   const mv = useMotionValue(0);
   const display = useTransform(mv, (latest) => latest.toFixed(decimals));
-  const [text, setText] = useState(reduced ? value.toFixed(decimals) : '0');
+  const [animatedText, setAnimatedText] = useState('0');
 
   useEffect(() => {
-    if (reduced) {
-      setText(value.toFixed(decimals));
-      return;
-    }
-    if (!inView) return;
+    if (reduced || !inView) return;
     const controls = animate(mv, value, { duration, ease: 'easeOut' });
-    const unsub = display.on('change', (v) => setText(v));
+    const unsub = display.on('change', (v) => setAnimatedText(v));
     return () => {
       controls.stop();
       unsub();
     };
   }, [value, inView, reduced, decimals, duration, mv, display]);
+
+  // With reduced motion the value is derived straight from the prop — no
+  // animation state to keep in sync.
+  const text = reduced ? value.toFixed(decimals) : animatedText;
 
   return (
     <Text component="span" ref={ref} {...rest}>

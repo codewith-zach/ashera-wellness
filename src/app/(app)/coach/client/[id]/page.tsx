@@ -1,6 +1,6 @@
 import { Box, Card, Container, Group, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
+import { LinkText } from '@/components/ui/links';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { toView } from '@/lib/entry-mapper';
@@ -19,18 +19,19 @@ export const dynamic = 'force-dynamic';
 export default async function CoachClientPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const coach = await requireUser();
   if (coach.role !== 'coach') redirect('/dashboard');
 
   const client = await prisma.user.findFirst({
-    where: { id: params.id, coachId: coach.id },
+    where: { id, coachId: coach.id },
   });
   if (!client) redirect('/coach');
 
   const entries = await prisma.dailyEntry.findMany({
-    where: { userId: params.id },
+    where: { userId: id },
     orderBy: { date: 'asc' },
   });
 
@@ -67,15 +68,14 @@ export default async function CoachClientPage({
       <Stack gap="xl">
         <MotionFade>
           <Box>
-            <Text
-              component={Link}
+            <LinkText
               href="/coach"
               fz="xs"
               c="sage.6"
               style={{ textDecoration: 'none' }}
             >
               ← All clients
-            </Text>
+            </LinkText>
             <Title
               order={1}
               ff="Playfair Display, serif"

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
-import { readJsonObject, badRequest } from '@/lib/api';
+import { readJsonObject, badRequest, validationError } from '@/lib/api';
 import { monthlySetupSchema } from '@/lib/validations/monthly';
 import { toMonthlyDb, toMonthlyView } from '@/lib/monthly-mapper';
 
@@ -13,10 +13,7 @@ export async function POST(req: NextRequest) {
   if (!json.ok) return badRequest('Invalid JSON body');
   const parsed = monthlySetupSchema.safeParse(json.body);
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'Invalid', issues: parsed.error.flatten() },
-      { status: 400 },
-    );
+    return validationError('Invalid monthly setup', parsed.error);
   }
   const { monthNumber, year, month, ...rest } = parsed.data;
   const data = toMonthlyDb(rest);

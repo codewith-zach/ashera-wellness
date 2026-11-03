@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
-import { readJsonObject, badRequest } from '@/lib/api';
+import { readJsonObject, badRequest, validationError } from '@/lib/api';
 import { weeklyReviewSchema } from '@/lib/validations/monthly';
 
 export const dynamic = 'force-dynamic';
@@ -14,10 +14,11 @@ function parseWeek(value: string) {
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { week: string } },
+  { params }: { params: Promise<{ week: string }> },
 ) {
+  const { week } = await params;
   const user = await requireUser();
-  const weekNumber = parseWeek(params.week);
+  const weekNumber = parseWeek(week);
   if (!weekNumber) return NextResponse.json({ review: null }, { status: 400 });
   const review = await prisma.weeklyReview.findUnique({
     where: { userId_weekNumber: { userId: user.id, weekNumber } },
@@ -27,19 +28,17 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { week: string } },
+  { params }: { params: Promise<{ week: string }> },
 ) {
+  const { week } = await params;
   const user = await requireUser();
-  const weekNumber = parseWeek(params.week);
+  const weekNumber = parseWeek(week);
   if (!weekNumber) return NextResponse.json({ error: 'Bad week' }, { status: 400 });
   const json = await readJsonObject(req);
   if (!json.ok) return badRequest('Invalid JSON body');
   const parsed = weeklyReviewSchema.partial().safeParse({ ...json.body, weekNumber });
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'Invalid', issues: parsed.error.flatten() },
-      { status: 400 },
-    );
+    return validationError('Invalid weekly review', parsed.error);
   }
   const { weekNumber: _ignored, ...rest } = parsed.data;
   const review = await prisma.weeklyReview.update({

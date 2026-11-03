@@ -1,10 +1,10 @@
 import { Box, Container, Stack, Text, Title } from '@mantine/core';
+import dayjs from 'dayjs';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { toView } from '@/lib/entry-mapper';
 import { dailyAffirmation } from '@/lib/data/options';
 import {
-  isoFromDate,
   longDate,
   timeBasedGreeting,
   todayISO,
@@ -28,7 +28,7 @@ export default async function DashboardPage() {
   const user = await requireUser();
   const today = todayISO();
 
-  const sevenDayStart = isoFromDate(new Date(Date.now() - 6 * 86400000));
+  const sevenDayStart = dayjs().subtract(6, 'day').format('YYYY-MM-DD');
   const { monthNumber } = journalNow(user.journalStartDate);
   const monthTheme = themeFor(monthNumber);
   const monthlySetup = await prisma.monthlySetup.findUnique({
@@ -46,7 +46,7 @@ export default async function DashboardPage() {
     prisma.dailyEntry.findMany({
       where: {
         userId: user.id,
-        date: { gte: isoFromDate(new Date(Date.now() - 30 * 86400000)) },
+        date: { gte: dayjs().subtract(30, 'day').format('YYYY-MM-DD') },
       },
       select: { date: true, mood: true },
     }),

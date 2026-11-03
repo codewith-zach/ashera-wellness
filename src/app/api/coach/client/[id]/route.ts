@@ -8,22 +8,23 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const coach = await requireUser();
   if (coach.role !== 'coach') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   const client = await prisma.user.findFirst({
-    where: { id: params.id, coachId: coach.id },
+    where: { id, coachId: coach.id },
   });
   if (!client) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
   const entries = await prisma.dailyEntry.findMany({
-    where: { userId: params.id },
+    where: { userId: id },
     orderBy: { date: 'desc' },
     take: 60,
   });

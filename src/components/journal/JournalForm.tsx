@@ -179,12 +179,16 @@ export function JournalForm({ date = todayISO(), initialEntry }: Props) {
   const [milestone, setMilestone] = useState<Milestone | null>(null);
 
   // Hydrate draft from localStorage on mount, but only if no entry exists.
+  // Reading localStorage in an effect (not in render) is deliberate: the
+  // server render has no localStorage, so a lazy initializer would cause a
+  // hydration mismatch.
   useEffect(() => {
     if (initialEntry || draftLoaded) return;
     try {
       const raw = localStorage.getItem(DRAFT_KEY(date));
       if (raw) {
         const draft = JSON.parse(raw) as FormState;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setForm(draft);
       }
     } catch {
