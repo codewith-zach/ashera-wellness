@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { readJsonObject, badRequest } from '@/lib/api';
 import { monthlySetupSchema } from '@/lib/validations/monthly';
 import { toMonthlyDb, toMonthlyView } from '@/lib/monthly-mapper';
 
@@ -33,8 +34,9 @@ export async function PATCH(
   const monthNumber = parseMonth(params.month);
   if (!monthNumber)
     return NextResponse.json({ error: 'Bad month' }, { status: 400 });
-  const body = await req.json();
-  const parsed = monthlySetupSchema.partial().safeParse({ ...body, monthNumber });
+  const json = await readJsonObject(req);
+  if (!json.ok) return badRequest('Invalid JSON body');
+  const parsed = monthlySetupSchema.partial().safeParse({ ...json.body, monthNumber });
   if (!parsed.success) {
     return NextResponse.json(
       { error: 'Invalid', issues: parsed.error.flatten() },

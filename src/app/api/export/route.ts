@@ -23,7 +23,12 @@ const CSV_HEADERS = [
 
 function escCsv(value: unknown): string {
   if (value == null) return '';
-  const s = Array.isArray(value) ? value.join('; ') : String(value);
+  let s = Array.isArray(value) ? value.join('; ') : String(value);
+  // Neutralise CSV formula injection: journal text could otherwise execute
+  // as a formula (=, +, -, @) when the export is opened in Excel/Sheets.
+  if (/^[=+\-@\t\r]/.test(s)) {
+    s = `'${s}`;
+  }
   if (s.includes(',') || s.includes('"') || s.includes('\n')) {
     return `"${s.replace(/"/g, '""')}"`;
   }

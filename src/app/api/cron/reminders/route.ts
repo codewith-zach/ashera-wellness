@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { sendEmail } from '@/lib/email/send';
@@ -6,6 +7,14 @@ import { todayISO } from '@/lib/utils/date';
 import { journalNow } from '@/lib/utils/journal-time';
 
 export const dynamic = 'force-dynamic';
+
+function isValidBearer(auth: string | null, secret: string): boolean {
+  if (!auth?.startsWith('Bearer ')) return false;
+  const token = Buffer.from(auth.slice(7));
+  const expected = Buffer.from(secret);
+  if (token.length !== expected.length) return false;
+  return timingSafeEqual(token, expected);
+}
 
 /**
  * Cron handler — protected by CRON_SECRET. Sends:
@@ -18,10 +27,14 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: NextRequest) {
   const secret = process.env.CRON_SECRET;
   const auth = req.headers.get('authorization');
-  if (process.env.NODE_ENV === 'production' && !secret) {
-    return NextResponse.json({ error: 'CRON_SECRET is required' }, { status: 500 });
-  }
-  if (secret && auth !== `Bearer ${secret}`) {
+
+  if (!secret) {
+    // No secret configured: only local development may call this endpoint.
+    // Preview/staging/production deployments must set CRON_SECRET.
+    if (process.env.NODE_ENV !== 'development') {
+      return NextResponse.json({ error: 'CRON_SECRET is required' }, { status: 500 });
+    }
+  } else if (!isValidBearer(auth, secret)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -30,7 +43,7 @@ export async function POST(req: NextRequest) {
   const hour = now.getUTCHours();
   const isMonday = now.getUTCDay() === 1;
 
-  const users = await prisma.user.findMany({
+  const users = (await prisma.user.findMany({
     where: { reminderEnabled: true },
     select: {
       id: true,
@@ -39,40 +52,60 @@ export async function POST(req: NextRequest) {
       reminderHour: true,
       journalStartDate: true,
     },
-  });
+  })).filter((u) => (u.reminderHour ?? 9) === hour);
 
-  const sent: { email: string; kind: string; delivered: boolean; reason?: string }[] = [];
+  // reminderHour is interpreted in UTC until per-user timezones exist.
+  if (users.length === 0) {
+    return NextResponse.json({ fired: 0, dryRun: !process.env.RESEND_API_KEY });
+  }
+
+  const userIds = users.map((u) => u.id);
+
+  // Batch the lookups instead of querying per user inside the loop.
+  const [todaysEntries, existingReviews] = await Promise.all([
+    prisma.dailyEntry.findMany({
+      where: { date: today, userId: { in: userIds } },
+      select: { userId: true },
+    }),
+    isMonday
+      ? prisma.weeklyReview.findMany({
+          where: { userId: { in: userIds } },
+          select: { userId: true, weekNumber: true },
+        })
+      : Promise.resolve([] as { userId: string; weekNumber: number }[]),
+  ]);
+  const loggedToday = new Set(todaysEntries.map((e) => e.userId));
+  const reviewDone = new Set(existingReviews.map((r) => `${r.userId}:${r.weekNumber}`));
+
+  const jobs: Promise<void>[] = [];
+  let daily = 0;
+  let weekly = 0;
 
   for (const u of users) {
-    // Only fire at the user's preferred hour (default 9am UTC).
-    if ((u.reminderHour ?? 9) !== hour) continue;
-
-    const todayEntry = await prisma.dailyEntry.findUnique({
-      where: { userId_date: { userId: u.id, date: today } },
-    });
-
-    if (!todayEntry) {
+    if (!loggedToday.has(u.id)) {
+      daily += 1;
       const { subject, html } = dailyReminderEmail(u.displayName);
-      const result = await sendEmail({ to: u.email, subject, html });
-      sent.push({ email: u.email, kind: 'daily', ...result });
+      jobs.push(sendEmail({ to: u.email, subject, html }).then(() => undefined));
     }
 
     if (isMonday) {
       const { weekNumber } = journalNow(u.journalStartDate);
-      const review = await prisma.weeklyReview.findUnique({
-        where: { userId_weekNumber: { userId: u.id, weekNumber: weekNumber - 1 } },
-      });
-      if (!review && weekNumber > 1) {
-        const { subject, html } = weeklyPromptEmail(u.displayName, weekNumber - 1);
-        const result = await sendEmail({ to: u.email, subject, html });
-        sent.push({ email: u.email, kind: 'weekly', ...result });
+      const prev = weekNumber - 1;
+      if (prev >= 1 && !reviewDone.has(`${u.id}:${prev}`)) {
+        weekly += 1;
+        const { subject, html } = weeklyPromptEmail(u.displayName, prev);
+        jobs.push(sendEmail({ to: u.email, subject, html }).then(() => undefined));
       }
     }
   }
 
+  await Promise.allSettled(jobs);
+
+  // Counts only — never echo recipient addresses out of this endpoint.
   return NextResponse.json({
-    fired: sent.length,
+    fired: daily + weekly,
+    daily,
+    weekly,
     dryRun: !process.env.RESEND_API_KEY,
-    results: sent,
   });
 }

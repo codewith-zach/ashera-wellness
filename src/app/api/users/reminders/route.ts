@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { readJsonObject, badRequest } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,8 +13,9 @@ const schema = z.object({
 
 export async function PATCH(req: NextRequest) {
   const user = await requireUser();
-  const body = await req.json();
-  const parsed = schema.safeParse(body);
+  const json = await readJsonObject(req);
+  if (!json.ok) return badRequest('Invalid JSON body');
+  const parsed = schema.safeParse(json.body);
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid' }, { status: 400 });
   }

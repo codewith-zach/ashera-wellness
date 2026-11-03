@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { readJsonObject, badRequest } from '@/lib/api';
 import { weeklyReviewSchema } from '@/lib/validations/monthly';
 
 export const dynamic = 'force-dynamic';
@@ -31,8 +32,9 @@ export async function PATCH(
   const user = await requireUser();
   const weekNumber = parseWeek(params.week);
   if (!weekNumber) return NextResponse.json({ error: 'Bad week' }, { status: 400 });
-  const body = await req.json();
-  const parsed = weeklyReviewSchema.partial().safeParse({ ...body, weekNumber });
+  const json = await readJsonObject(req);
+  if (!json.ok) return badRequest('Invalid JSON body');
+  const parsed = weeklyReviewSchema.partial().safeParse({ ...json.body, weekNumber });
   if (!parsed.success) {
     return NextResponse.json(
       { error: 'Invalid', issues: parsed.error.flatten() },

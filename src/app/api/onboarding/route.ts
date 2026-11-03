@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { readJsonObject, badRequest } from '@/lib/api';
 import { onboardingSchema } from '@/lib/validations/entry';
 import { packArr } from '@/lib/utils/json-array';
 
@@ -8,8 +9,9 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   const user = await requireUser();
-  const body = await req.json();
-  const parsed = onboardingSchema.safeParse(body);
+  const json = await readJsonObject(req);
+  if (!json.ok) return badRequest('Invalid JSON body');
+  const parsed = onboardingSchema.safeParse(json.body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: 'Invalid', issues: parsed.error.flatten() },

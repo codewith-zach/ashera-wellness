@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { readJsonObject, badRequest } from '@/lib/api';
 import { dailyEntrySchema } from '@/lib/validations/entry';
 import { toView, toDbWrite } from '@/lib/entry-mapper';
 
@@ -22,9 +23,10 @@ export async function PATCH(
   { params }: { params: { date: string } },
 ) {
   const user = await requireUser();
-  const body = await req.json();
+  const json = await readJsonObject(req);
+  if (!json.ok) return badRequest('Invalid JSON body');
   const parsed = dailyEntrySchema.partial().safeParse({
-    ...body,
+    ...json.body,
     date: params.date,
   });
   if (!parsed.success) {
