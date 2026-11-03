@@ -3,6 +3,8 @@ import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { periodFromQuery, periodStart } from '@/lib/utils/period';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   const user = await requireUser();
   const { searchParams } = new URL(req.url);

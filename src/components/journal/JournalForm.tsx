@@ -269,7 +269,7 @@ export function JournalForm({ date = todayISO(), initialEntry }: Props) {
     <Container size="md" px={{ base: 'sm', sm: 'xs' }} py={{ base: 'md', sm: 'lg' }}>
       <Confetti show={confetti} />
       <MilestoneCelebration milestone={milestone} onDismiss={dismissMilestone} />
-      <Stack gap={{ base: 'md', sm: 'lg' }}>
+      <Stack gap="lg">
         <Box>
           <Text c="sage.6" fz="xs" tt="uppercase" lts={2}>
             Today
@@ -563,7 +563,7 @@ export function JournalForm({ date = todayISO(), initialEntry }: Props) {
 
         <SectionCard index={8} title="Movement & Exercise" icon="🚶‍♀️">
           <Stack gap="md">
-            <Group grow align="flex-end" wrap={{ base: 'wrap', xs: 'nowrap' }}>
+            <Group grow align="flex-end" wrap="wrap">
               <TextInput
                 label="Activity"
                 value={form.moveActivity}

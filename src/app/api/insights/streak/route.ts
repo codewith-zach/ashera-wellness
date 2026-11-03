@@ -3,6 +3,8 @@ import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { computeStreak, entriesThisWeek } from '@/lib/utils/streak';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const user = await requireUser();
   const dates = (

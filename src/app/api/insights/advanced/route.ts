@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db';
 import { unpackArr } from '@/lib/utils/json-array';
 import dayjs from 'dayjs';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(_req: NextRequest) {
   const user = await requireUser();
 

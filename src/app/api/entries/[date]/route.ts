@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db';
 import { dailyEntrySchema } from '@/lib/validations/entry';
 import { toView, toDbWrite } from '@/lib/entry-mapper';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: { date: string } },

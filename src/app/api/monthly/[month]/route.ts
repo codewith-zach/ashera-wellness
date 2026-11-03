@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db';
 import { monthlySetupSchema } from '@/lib/validations/monthly';
 import { toMonthlyDb, toMonthlyView } from '@/lib/monthly-mapper';
 
+export const dynamic = 'force-dynamic';
+
 function parseMonth(value: string) {
   const n = parseInt(value, 10);
   if (!Number.isFinite(n) || n < 1 || n > 11) return null;

@@ -68,7 +68,7 @@ export function ClientCard({ client }: { client: Client }) {
               </Badge>
             </Stack>
           </Group>
-          <Group gap={{ base: 'md', sm: 'xl' }} wrap="wrap">
+          <Group gap="xl" wrap="wrap">
             <Stack gap={0}>
               <Text fz={10} c="sage.6" tt="uppercase" lts={1}>
                 This week

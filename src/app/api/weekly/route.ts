@@ -3,6 +3,8 @@ import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { weeklyReviewSchema } from '@/lib/validations/monthly';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   const user = await requireUser();
   const body = await req.json();

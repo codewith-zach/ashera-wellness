@@ -2,6 +2,8 @@ import { Anchor, Card, Container, Group, Stack, Text, Title } from '@mantine/cor
 import { requireUser } from '@/lib/auth';
 import { ReminderSettings } from '@/components/profile/ReminderSettings';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProfilePage() {
   const user = await requireUser();
   return (

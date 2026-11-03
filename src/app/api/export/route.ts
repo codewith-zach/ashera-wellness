@@ -5,6 +5,8 @@ import { toView } from '@/lib/entry-mapper';
 import { computeStreak } from '@/lib/utils/streak';
 import { unpackArr } from '@/lib/utils/json-array';
 
+export const dynamic = 'force-dynamic';
+
 const CSV_HEADERS = [
   'date', 'mood', 'moodEmoji', 'energyLevel', 'stressLevel', 'bodyFeelings',
   'sleepHours', 'sleepQuality',

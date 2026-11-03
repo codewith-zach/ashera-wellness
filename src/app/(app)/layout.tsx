@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { AppShellClient } from '@/components/layout/AppShellClient';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AppLayout({
   children,
 }: {

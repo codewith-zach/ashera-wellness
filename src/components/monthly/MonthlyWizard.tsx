@@ -211,7 +211,7 @@ export function MonthlyWizard({ monthNumber, year, month, setup }: Props) {
 
   return (
     <Container size="md" px={{ base: 'sm', sm: 'md' }} py={{ base: 'md', sm: 'lg' }}>
-      <Stack gap={{ base: 'md', sm: 'lg' }}>
+      <Stack gap="lg">
         <Box>
           <Text fz="xs" c="sage.6" tt="uppercase" lts={2}>
             Month {monthNumber} setup

@@ -18,13 +18,13 @@ export function CheckInHeatmap({ loggedDates, days = 30 }: Props) {
         <Text fz="sm" c="sage.7" fw={500}>
           Last {days} days
         </Text>
-        <Group gap={{ base: 8, sm: 'md' }} wrap="wrap">
+        <Group gap="md" wrap="wrap">
           <LegendDot color="rgba(221,233,222,0.7)" label="Missed" />
           <LegendDot color="#7A9E7E" label="Logged" />
           <LegendDot color="#C9A96E" label="Today" border />
         </Group>
       </Group>
-      <Group gap={{ base: 3, sm: 4 }} wrap="wrap">
+      <Group gap={4} wrap="wrap">
         {dates.map((d) => {
           const logged = loggedDates.has(d);
           const isToday = d === today;

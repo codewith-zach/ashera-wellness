@@ -22,6 +22,8 @@ import { detectGentleReturn } from '@/lib/utils/streak-detect';
 import { journalNow } from '@/lib/utils/journal-time';
 import { themeFor } from '@/lib/data/months';
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage() {
   const user = await requireUser();
   const today = todayISO();
@@ -88,7 +90,7 @@ export default async function DashboardPage() {
 
   return (
     <Container size="lg" px={{ base: 'sm', sm: 'md' }} py={{ base: 'md', sm: 'lg' }}>
-      <Stack gap={{ base: 'lg', sm: 'xl' }}>
+      <Stack gap="xl">
         <MotionFade>
           <Box>
             <Text

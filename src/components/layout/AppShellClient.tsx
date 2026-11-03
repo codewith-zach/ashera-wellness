@@ -76,7 +76,7 @@ export function AppShellClient({
           wrap="nowrap"
           gap="xs"
         >
-          <Group gap={{ base: 6, sm: 12 }} wrap="nowrap" style={{ minWidth: 0 }}>
+          <Group gap={12} wrap="nowrap" style={{ minWidth: 0 }}>
             <Burger
               opened={opened}
               onClick={toggle}

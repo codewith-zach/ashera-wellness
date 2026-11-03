@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db';
 import { toView } from '@/lib/entry-mapper';
 import { notFound } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default async function JournalForDate({
   params,
 }: {

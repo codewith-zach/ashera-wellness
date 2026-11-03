@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db';
 import { monthlySetupSchema } from '@/lib/validations/monthly';
 import { toMonthlyDb, toMonthlyView } from '@/lib/monthly-mapper';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   const user = await requireUser();
   const body = await req.json();
@@ -14,12 +16,12 @@ export async function POST(req: NextRequest) {
       { status: 400 },
     );
   }
-  const { monthNumber, ...rest } = parsed.data;
+  const { monthNumber, year, month, ...rest } = parsed.data;
   const data = toMonthlyDb(rest);
   const setup = await prisma.monthlySetup.upsert({
     where: { userId_monthNumber: { userId: user.id, monthNumber } },
-    create: { userId: user.id, monthNumber, ...data },
-    update: data,
+    create: { userId: user.id, monthNumber, year, month, ...data },
+    update: { year, month, ...data },
   });
   return NextResponse.json({ setup: toMonthlyView(setup) });
 }

@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db';
 import { computeStreak } from '@/lib/utils/streak';
 import dayjs from 'dayjs';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const user = await requireUser();
   if (user.role !== 'coach') {

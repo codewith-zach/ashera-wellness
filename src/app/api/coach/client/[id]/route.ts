@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db';
 import { toView } from '@/lib/entry-mapper';
 import { computeStreak, entriesThisWeek } from '@/lib/utils/streak';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: { id: string } },

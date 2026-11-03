@@ -5,6 +5,8 @@ import { dailyReminderEmail, weeklyPromptEmail } from '@/lib/email/templates';
 import { todayISO } from '@/lib/utils/date';
 import { journalNow } from '@/lib/utils/journal-time';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Cron handler — protected by CRON_SECRET. Sends:
  *  - Daily reminder to opted-in users who haven't logged today, at their preferred hour.
@@ -16,6 +18,9 @@ import { journalNow } from '@/lib/utils/journal-time';
 export async function POST(req: NextRequest) {
   const secret = process.env.CRON_SECRET;
   const auth = req.headers.get('authorization');
+  if (process.env.NODE_ENV === 'production' && !secret) {
+    return NextResponse.json({ error: 'CRON_SECRET is required' }, { status: 500 });
+  }
   if (secret && auth !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

@@ -9,6 +9,8 @@ import { longDate } from '@/lib/utils/date';
 import { HistoryFilters } from '@/components/history/HistoryFilters';
 import { HistoryPagination } from '@/components/history/HistoryPagination';
 
+export const dynamic = 'force-dynamic';
+
 const PAGE_SIZE = 20;
 
 export default async function HistoryPage({
@@ -69,7 +71,7 @@ export default async function HistoryPage({
 
   return (
     <Container size="md" px={{ base: 'sm', sm: 'md' }} py={{ base: 'md', sm: 'lg' }}>
-      <Stack gap={{ base: 'md', sm: 'lg' }}>
+      <Stack gap="lg">
         <Box>
           <Text fz="xs" c="sage.6" tt="uppercase" lts={2}>
             Archive

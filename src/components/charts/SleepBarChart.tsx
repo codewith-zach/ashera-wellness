@@ -49,14 +49,6 @@ export function SleepBarChart({ data, height = 180 }: { data: Point[]; height?: 
             borderRadius: 12,
             fontFamily: 'DM Sans, sans-serif',
           }}
-          labelFormatter={(label, payload) => {
-            const date = payload?.[0]?.payload?.date;
-            return date ? dayjs(date).format('ddd, D MMM') : label;
-          }}
-          formatter={(v: number, _name, p) => [
-            `${v}h · ${p.payload.quality ?? '—'}`,
-            'Sleep',
-          ]}
         />
         <Bar dataKey="hours" radius={[8, 8, 4, 4]} isAnimationActive animationDuration={900}>
           {series.map((d, i) => (

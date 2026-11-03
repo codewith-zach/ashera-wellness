@@ -20,6 +20,8 @@ import {
   AiOverallCallout,
 } from '@/components/insights/AiInsightSection';
 
+export const dynamic = 'force-dynamic';
+
 export default async function InsightsPage({
   searchParams,
 }: {
@@ -147,7 +149,7 @@ export default async function InsightsPage({
 
   return (
     <Container size="lg" px={{ base: 'sm', sm: 'md' }} py={{ base: 'md', sm: 'lg' }}>
-      <Stack gap={{ base: 'md', sm: 'xl' }}>
+      <Stack gap="xl">
         <Box>
           <Group justify="space-between" align="flex-start" wrap="wrap" gap="xs">
             <Box style={{ minWidth: 0 }}>

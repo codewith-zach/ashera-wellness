@@ -7,6 +7,8 @@ import { computeStreak } from '@/lib/utils/streak';
 import { newlyEarned } from '@/lib/milestones';
 import { packArr, unpackArr } from '@/lib/utils/json-array';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   const user = await requireUser();
   const body = await req.json();

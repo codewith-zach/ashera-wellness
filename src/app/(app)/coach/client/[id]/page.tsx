@@ -14,6 +14,8 @@ import { CheckInHeatmap } from '@/components/dashboard/CheckInHeatmap';
 import { MotionFade } from '@/components/animations/MotionFade';
 import dayjs from 'dayjs';
 
+export const dynamic = 'force-dynamic';
+
 export default async function CoachClientPage({
   params,
 }: {

@@ -7,6 +7,8 @@ import { CoachClientList } from '@/components/coach/CoachClientList';
 import { MotionFade } from '@/components/animations/MotionFade';
 import dayjs from 'dayjs';
 
+export const dynamic = 'force-dynamic';
+
 export default async function CoachDashboardPage() {
   const user = await requireUser();
   if (user.role !== 'coach') redirect('/dashboard');
@@ -75,7 +77,7 @@ export default async function CoachDashboardPage() {
 
   return (
     <Container size="xl" px={{ base: 'sm', sm: 'md' }} py={{ base: 'md', sm: 'lg' }}>
-      <Stack gap={{ base: 'md', sm: 'xl' }}>
+      <Stack gap="xl">
         <MotionFade>
           <Box>
             <Text fz="xs" c="sage.6" tt="uppercase" lts={2}>

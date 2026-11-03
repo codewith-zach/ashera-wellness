@@ -113,13 +113,9 @@ export function TodayStatusCard({ entry }: Props) {
               You showed up for yourself ✨
             </Title>
           </Stack>
-          <Group
-            gap={{ base: 'lg', sm: 'xl' }}
-            wrap="wrap"
-            justify={{ base: 'center', sm: 'flex-start' }}
-          >
+          <Group gap="xl" wrap="wrap" justify="flex-start">
             {moodLabel && (
-              <Stack gap={0} align={{ base: 'center', sm: 'flex-start' }}>
+              <Stack gap={0} align="flex-start">
                 <Text fz="xs" c="sage.6" tt="uppercase" lts={2}>
                   Mood
                 </Text>
@@ -132,7 +128,7 @@ export function TodayStatusCard({ entry }: Props) {
               </Stack>
             )}
             {entry.energyLevel != null && (
-              <Stack gap={0} align={{ base: 'center', sm: 'flex-start' }}>
+              <Stack gap={0} align="flex-start">
                 <Text fz="xs" c="sage.6" tt="uppercase" lts={2}>
                   Energy
                 </Text>
@@ -142,7 +138,7 @@ export function TodayStatusCard({ entry }: Props) {
               </Stack>
             )}
             {entry.sleepHours != null && (
-              <Stack gap={0} align={{ base: 'center', sm: 'flex-start' }}>
+              <Stack gap={0} align="flex-start">
                 <Text fz="xs" c="sage.6" tt="uppercase" lts={2}>
                   Sleep
                 </Text>

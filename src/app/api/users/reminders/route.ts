@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 const schema = z.object({
   enabled: z.boolean(),
   hour: z.number().int().min(0).max(23),

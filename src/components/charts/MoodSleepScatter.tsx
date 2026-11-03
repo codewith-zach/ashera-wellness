@@ -70,69 +70,71 @@ export function MoodSleepScatter({ data, height = 260 }: Props) {
 
   return (
     <div>
-      <ResponsiveContainer width="100%" height={height} aria-label="Mood vs Sleep scatter plot" role="img">
-        <ScatterChart margin={{ top: 8, right: 16, bottom: 24, left: -16 }}>
-          <CartesianGrid stroke="#dde9de" strokeDasharray="3 6" />
-          <XAxis
-            type="number"
-            dataKey="x"
-            domain={[0, 12]}
-            name="Sleep"
-            stroke="#8db99f"
-            fontSize={11}
-            tickLine={false}
-          >
-            <Label value="Sleep (hours)" position="bottom" offset={12} style={{ fill: '#5f8b66', fontSize: 12 }} />
-          </XAxis>
-          <YAxis
-            type="number"
-            dataKey="y"
-            domain={[1, 5]}
-            ticks={[1, 2, 3, 4, 5]}
-            name="Mood"
-            stroke="#8db99f"
-            fontSize={11}
-            tickLine={false}
-          >
-            <Label value="Mood" angle={-90} position="left" offset={20} style={{ fill: '#5f8b66', fontSize: 12 }} />
-          </YAxis>
-          <Tooltip
-            cursor={{ strokeDasharray: '3 3', stroke: '#b5ceb8' }}
-            contentStyle={{
-              background: '#fff',
-              border: '1px solid rgba(122,158,126,0.2)',
-              borderRadius: 12,
-              fontFamily: 'DM Sans, sans-serif',
-              fontSize: 13,
-            }}
-            formatter={(v: number, name: string) => [name === 'x' ? `${v}h` : `${v}/5`, name === 'x' ? 'Sleep' : 'Mood']}
-          />
-          <Scatter
-            data={pts}
-            fill="#7A9E7E"
-            fillOpacity={0.75}
-            stroke="#4A7050"
-            strokeWidth={1}
-            r={5}
-            isAnimationActive
-            animationDuration={800}
-          />
-          {trendPts.length > 0 && (
-            <ReferenceLine
-              stroke="#C9A96E"
-              strokeWidth={2}
-              strokeDasharray="6 3"
-              segment={trendPts as [{ x: number; y: number }, { x: number; y: number }]}
-              label={{
-                value: 'trend',
-                position: 'insideTopRight',
-                fill: '#C9A96E',
-                fontSize: 11,
+      <div aria-label="Mood vs Sleep scatter plot" role="img">
+        <ResponsiveContainer width="100%" height={height}>
+          <ScatterChart margin={{ top: 8, right: 16, bottom: 24, left: -16 }}>
+            <CartesianGrid stroke="#dde9de" strokeDasharray="3 6" />
+            <XAxis
+              type="number"
+              dataKey="x"
+              domain={[0, 12]}
+              name="Sleep"
+              stroke="#8db99f"
+              fontSize={11}
+              tickLine={false}
+            >
+              <Label value="Sleep (hours)" position="bottom" offset={12} style={{ fill: '#5f8b66', fontSize: 12 }} />
+            </XAxis>
+            <YAxis
+              type="number"
+              dataKey="y"
+              domain={[1, 5]}
+              ticks={[1, 2, 3, 4, 5]}
+              name="Mood"
+              stroke="#8db99f"
+              fontSize={11}
+              tickLine={false}
+            >
+              <Label value="Mood" angle={-90} position="left" offset={20} style={{ fill: '#5f8b66', fontSize: 12 }} />
+            </YAxis>
+            <Tooltip
+              cursor={{ strokeDasharray: '3 3', stroke: '#b5ceb8' }}
+              contentStyle={{
+                background: '#fff',
+                border: '1px solid rgba(122,158,126,0.2)',
+                borderRadius: 12,
+                fontFamily: 'DM Sans, sans-serif',
+                fontSize: 13,
               }}
+              formatter={(v: number, name: string) => [name === 'x' ? `${v}h` : `${v}/5`, name === 'x' ? 'Sleep' : 'Mood']}
             />
-          )}
-        </ScatterChart>
-      </ResponsiveContainer>
+            <Scatter
+              data={pts}
+              fill="#7A9E7E"
+              fillOpacity={0.75}
+              stroke="#4A7050"
+              strokeWidth={1}
+              r={5}
+              isAnimationActive
+              animationDuration={800}
+            />
+            {trendPts.length > 0 && (
+              <ReferenceLine
+                stroke="#C9A96E"
+                strokeWidth={2}
+                strokeDasharray="6 3"
+                segment={trendPts as [{ x: number; y: number }, { x: number; y: number }]}
+                label={{
+                  value: 'trend',
+                  position: 'insideTopRight',
+                  fill: '#C9A96E',
+                  fontSize: 11,
+                }}
+              />
+            )}
+          </ScatterChart>
+        </ResponsiveContainer>
+      </div>
       {insight && (
         <p style={{ margin: '8px 0 0', fontSize: 13, color: '#5f8b66', fontStyle: 'italic', fontFamily: 'Playfair Display, serif' }}>
           {insight}

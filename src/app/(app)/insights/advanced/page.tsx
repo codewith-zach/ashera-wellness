@@ -13,6 +13,7 @@ import { MotionFade } from '@/components/animations/MotionFade';
 import dayjs from 'dayjs';
 
 export const metadata = { title: 'Advanced Insights' };
+export const dynamic = 'force-dynamic';
 
 export default async function AdvancedInsightsPage() {
   const user = await requireUser();

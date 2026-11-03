@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db';
 import { journalNow } from '@/lib/utils/journal-time';
 import { WeeklyForm } from '@/components/weekly/WeeklyForm';
 
+export const dynamic = 'force-dynamic';
+
 export default async function WeeklyPage() {
   const user = await requireUser();
   const { weekNumber } = journalNow(user.journalStartDate);

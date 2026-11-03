@@ -3,6 +3,8 @@ import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { weeklyReviewSchema } from '@/lib/validations/monthly';
 
+export const dynamic = 'force-dynamic';
+
 function parseWeek(value: string) {
   const n = parseInt(value, 10);
   if (!Number.isFinite(n) || n < 1 || n > 44) return null;

@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db';
 import { onboardingSchema } from '@/lib/validations/entry';
 import { packArr } from '@/lib/utils/json-array';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   const user = await requireUser();
   const body = await req.json();

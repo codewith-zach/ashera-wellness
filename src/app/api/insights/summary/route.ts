@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db';
 import { unpackArr } from '@/lib/utils/json-array';
 import { computeStreak } from '@/lib/utils/streak';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const user = await requireUser();
   const entries = await prisma.dailyEntry.findMany({
