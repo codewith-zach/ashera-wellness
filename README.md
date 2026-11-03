@@ -12,7 +12,8 @@ A warm, sage-toned digital companion to the printed wellness journal — daily e
 - **Onboarding wizard** (PRD §6.1): 4 steps — welcome, 11-month healing intention, commitment letter, nervous-system baseline
 - **Daily journal** (PRD §6.3): all 11 sections (mood, body, sleep, nutrition, gut, symptoms, hormone/cycle, movement, mind, self-care, reflection) with chip multi-selects, sliders, animated water cup tap UI, mood emoji selector with bounce, autosave drafts every 30s, petal-confetti on save
 - **Dashboard** (PRD §6.2): time-based greeting, daily affirmation, stats bar, today's status card with hydration ring + completion summary, 30-day check-in heatmap, **7-day mood sparkline / energy-vs-stress / sleep bar charts** (Recharts, animate on mount)
-- **Insights page** (PRD §6.6): summary stats with `CountUp` animations, period selector (7/14/30/90/all), mood journey, energy & stress, sleep bar, sleep quality doughnut, symptom heatmap, top symptoms, self-care donut. Each chart has a gentle local-heuristic callout (the AI version from Phase 4 will replace these).
+- **Insights page** (PRD §6.6): summary stats with `CountUp` animations, period selector (7/14/30/90/all), mood journey, energy & stress, sleep bar, sleep quality doughnut, symptom heatmap, top symptoms, self-care donut. Callouts come from ZhipuAI (`ZAI_API_KEY`, model configurable via `ZAI_MODEL`) with a rule-based local fallback when the key is missing or the call fails.
+- **Advanced insights**: mood-vs-sleep correlation scatter, monthly comparison, hormone cycle phase ring, and pain body map.
 - **API routes** (PRD §7.1, §7.2): `POST/GET /api/entries`, `GET/PATCH /api/entries/[date]`, `GET /api/insights/{streak,mood,sleep,symptoms,summary}`, `POST /api/onboarding`
 - **App shell**: Mantine `AppShell` with collapsible sidebar nav, animated streak badge in the header
 - **History** (PRD §6.7): paginated 20/page, month + mood filters, month separator headers, click → `/journal/[date]`
@@ -24,17 +25,10 @@ A warm, sage-toned digital companion to the printed wellness journal — daily e
 
 ## Deferred (later phases)
 
-These are stubbed but intentionally not built in this slice — they need cloud credentials or are scoped to later phases:
-
-- **Auth**: a single dev user is auto-created (`you@ashera.local`). Phase 1.2 swaps this for Supabase magic-link auth.
+- **Auth**: a single dev user is auto-created (`you@ashera.local`). A later phase swaps this for Supabase magic-link auth. Production builds refuse to run with dev auth unless `ALLOW_DEV_AUTH=true` is explicitly set.
 - **Postgres / Supabase**: the schema is SQLite-friendly. Switching to Supabase needs `provider = "postgresql"` in `prisma/schema.prisma`, replacing the JSON-packed `String` array fields with native `String[]`, and the Supabase env vars.
-- **Mood vs Sleep correlation scatter, body silhouette pain map, hormone cycle phase tracker** (Phase 5).
-- **AI insight callouts** (Phase 4): the Insights page already ships with placeholder rule-based callouts. Phase 4 swaps these for Anthropic `claude-haiku-4-5-20251001`.
-- **Coach dashboard + data export** (Phase 4).
 - **Real email delivery**: needs `RESEND_API_KEY`, `RESEND_FROM` (verified sender), `CRON_SECRET`, and `NEXT_PUBLIC_APP_URL` in `.env.local`. Without these, the cron handler runs in dry mode and logs intended sends.
-- **Weekly review** (Phase 3, §6.4) — placeholder page in the sidebar.
-- **Streak milestone celebrations + email reminders** (Phase 3).
-- **AI insights + coach dashboard** (Phase 4).
+- **Per-user timezones**: reminder hours are interpreted in UTC until timezone support lands on the user model.
 
 ## Running locally
 
@@ -44,6 +38,8 @@ npx prisma db push        # creates SQLite ./prisma/dev.db
 node scripts/seed.mjs     # optional: 14 days of demo data so charts have something to draw
 npm run dev               # http://localhost:3000
 ```
+
+Useful checks: `npm run typecheck`, `npm run lint`, `npm test` (Vitest), `npm run build`.
 
 No cloud accounts needed. First load auto-creates the dev user and lands you on `/onboarding` (or `/dashboard` if seeded).
 
@@ -61,7 +57,7 @@ No cloud accounts needed. First load auto-creates the dev user and lands you on 
 src/
   app/
     (app)/                 — authenticated shell (dashboard/journal/history/monthly/weekly/profile)
-    api/                   — entries, onboarding, insights/streak
+    api/                   — entries, onboarding, insights, monthly, weekly, coach, export, cron
     onboarding/            — top-level wizard, no shell
   components/
     animations/            — Framer Motion variants + MotionFade wrapper
@@ -70,7 +66,7 @@ src/
     history/               — HistoryFilters, HistoryPagination
     insights/              — InsightsHero, PeriodTabs, InsightCallout
     journal/               — JournalForm + section primitives (MoodSelector, WaterCups, ChipMulti, etc.)
-    layout/                — AppShellClient, StreakBadge, ComingSoon
+    layout/                — AppShellClient, StreakBadge
     milestones/            — MilestoneCelebration overlay
     monthly/               — MonthlyWizard (7 steps)
     weekly/                — WeeklyForm (sticky-note grid)
@@ -78,19 +74,22 @@ src/
     profile/               — ReminderSettings
     providers/             — React Query
   lib/
-    auth.ts                — dev user stub
-    db.ts                  — Prisma client singleton
+    api.ts                 — shared request helpers (JSON body parsing, 400s)
+    auth.ts                — dev user stub (fails closed in production)
+    db.ts                  — Prisma client singleton (rejects SQLite in production)
     entry-mapper.ts        — DailyEntry ↔ View (handles JSON arrays)
     monthly-mapper.ts      — MonthlySetup ↔ View
     milestones.ts          — milestone definitions + detection
+    ai/                    — ZhipuAI client + prompts
     email/                 — Resend templates + sender (dry-runs without key)
-    insights/local-callouts.ts — placeholder for Phase-4 AI callouts
+    insights/local-callouts.ts — rule-based fallback callouts
     data/options.ts        — daily journal chip options
     data/months.ts         — 11-month theme + suggested affirmations
     data/monthly-options.ts — monthly setup chip options
     utils/                 — date / streak / streak-detect / journal-time / json-array / period helpers
     validations/entry.ts   — Zod schemas for daily entry + onboarding
     validations/monthly.ts — Zod schemas for monthly + weekly
+    validations/common.ts  — shared field size bounds
   theme/index.ts           — Mantine theme (brand tokens)
 prisma/
   schema.prisma            — full schema (SQLite-targeted for now)

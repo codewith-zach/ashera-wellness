@@ -1,11 +1,11 @@
 /**
  * ZhipuAI (ZAI) client — uses the OpenAI-compatible endpoint.
- * Model: glm-4-plus (capable and cost-efficient — PRD §6.6 AI insight layer).
+ * Model is configurable via ZAI_MODEL (default glm-4-flash).
  * Docs: https://open.bigmodel.cn/dev/api
  */
 
 const BASE_URL = 'https://open.bigmodel.cn/api/paas/v4';
-const MODEL = 'glm-4-plus';
+const MODEL = process.env.ZAI_MODEL ?? 'glm-4-flash';
 
 interface Message {
   role: 'system' | 'user' | 'assistant';
