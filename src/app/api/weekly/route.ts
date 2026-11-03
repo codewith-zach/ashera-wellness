@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { readJsonObject, badRequest, validationError } from '@/lib/api';
-import { weeklyReviewSchema } from '@/lib/validations/monthly';
+import { weeklyReviewSchema } from '@/lib/validations/weekly';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,11 +23,3 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ review });
 }
 
-export async function GET() {
-  const user = await requireUser();
-  const reviews = await prisma.weeklyReview.findMany({
-    where: { userId: user.id },
-    orderBy: { weekNumber: 'asc' },
-  });
-  return NextResponse.json({ reviews });
-}

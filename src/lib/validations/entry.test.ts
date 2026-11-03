@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { dailyEntrySchema, onboardingSchema } from './entry';
+import { dailyEntrySchema } from './entry';
 
 describe('dailyEntrySchema', () => {
   it('accepts a minimal entry and defaults array fields', () => {
@@ -51,27 +51,6 @@ describe('dailyEntrySchema', () => {
     ).toBe(false);
     expect(
       dailyEntrySchema.safeParse({ date: '2026-01-05', breakfast: 'x'.repeat(1001) }).success,
-    ).toBe(false);
-  });
-});
-
-describe('onboardingSchema', () => {
-  it('accepts a complete onboarding payload', () => {
-    const parsed = onboardingSchema.safeParse({
-      healingIntention: 'steady energy',
-      majorHealthGoal: 'sleep through the night',
-      goalFeeling: 'rested',
-      goalWhyItMatters: 'to be present',
-      commitmentLetter: 'I will show up gently.',
-      nervousSystemSafe: 'Mostly',
-      bodyRelationship: ['curious'],
-    });
-    expect(parsed.success).toBe(true);
-  });
-
-  it('rejects oversized commitment letters', () => {
-    expect(
-      onboardingSchema.safeParse({ commitmentLetter: 'x'.repeat(5001) }).success,
     ).toBe(false);
   });
 });

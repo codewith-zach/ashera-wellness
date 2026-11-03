@@ -60,27 +60,3 @@ export async function POST(req: NextRequest) {
   });
 }
 
-export async function GET(req: NextRequest) {
-  const user = await requireUser();
-  const { searchParams } = new URL(req.url);
-  const from = searchParams.get('from');
-  const to = searchParams.get('to');
-
-  const where: { userId: string; date?: { gte?: string; lte?: string } } = {
-    userId: user.id,
-  };
-  if (from || to) {
-    where.date = {};
-    if (from) where.date.gte = from;
-    if (to) where.date.lte = to;
-  }
-
-  const entries = await prisma.dailyEntry.findMany({
-    where,
-    orderBy: { date: 'desc' },
-  });
-  return NextResponse.json({
-    entries: entries.map(toView),
-    total: entries.length,
-  });
-}

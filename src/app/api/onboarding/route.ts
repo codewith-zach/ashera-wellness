@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { readJsonObject, badRequest, validationError } from '@/lib/api';
-import { onboardingSchema } from '@/lib/validations/entry';
+import { onboardingSchema } from '@/lib/validations/onboarding';
 import { packArr } from '@/lib/utils/json-array';
 
 export const dynamic = 'force-dynamic';

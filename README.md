@@ -14,7 +14,7 @@ A warm, sage-toned digital companion to the printed wellness journal — daily e
 - **Dashboard** (PRD §6.2): time-based greeting, daily affirmation, stats bar, today's status card with hydration ring + completion summary, 30-day check-in heatmap, **7-day mood sparkline / energy-vs-stress / sleep bar charts** (Recharts, animate on mount)
 - **Insights page** (PRD §6.6): summary stats with `CountUp` animations, period selector (7/14/30/90/all), mood journey, energy & stress, sleep bar, sleep quality doughnut, symptom heatmap, top symptoms, self-care donut. Callouts come from ZhipuAI (`ZAI_API_KEY`, model configurable via `ZAI_MODEL`) with a rule-based local fallback when the key is missing or the call fails.
 - **Advanced insights**: mood-vs-sleep correlation scatter, monthly comparison, hormone cycle phase ring, and pain body map.
-- **API routes** (PRD §7.1, §7.2): `POST/GET /api/entries`, `GET/PATCH /api/entries/[date]`, `GET /api/insights/{streak,mood,sleep,symptoms,summary}`, `POST /api/onboarding`
+- **API routes**: the app reads via server components and writes through a small JSON surface — `POST /api/{entries,monthly,weekly,onboarding}`, `PATCH /api/users/reminders`, `GET /api/insights/{streak,ai}`, `GET /api/export?format={csv,summary}`, and the cron entry point `POST /api/cron/reminders`.
 - **App shell**: Mantine `AppShell` with collapsible sidebar nav, animated streak badge in the header
 - **History** (PRD §6.7): paginated 20/page, month + mood filters, month separator headers, click → `/journal/[date]`
 - **Monthly setup wizard** (PRD §6.5): 7-step wizard with theme/affirmation, health snapshot, three stress sliders, food & nervous-system support, self-care focus, appointments, medical snapshot. Adopt the suggested affirmation or write your own. Saved affirmation surfaces on the dashboard.
@@ -56,7 +56,7 @@ No cloud accounts needed. First load auto-creates the dev user and lands you on 
 src/
   app/
     (app)/                 — authenticated shell (dashboard/journal/history/monthly/weekly/profile)
-    api/                   — entries, onboarding, insights, monthly, weekly, coach, export, cron
+    api/                   — write surface used by the UI (entries, monthly, weekly, onboarding, reminders) + insights/streak, insights/ai, export, cron
     onboarding/            — top-level wizard, no shell
   components/
     animations/            — Framer Motion variants + MotionFade wrapper
@@ -86,8 +86,10 @@ src/
     data/months.ts         — 11-month theme + suggested affirmations
     data/monthly-options.ts — monthly setup chip options
     utils/                 — date / streak / streak-detect / journal-time / json-array / period helpers
-    validations/entry.ts   — Zod schemas for daily entry + onboarding
-    validations/monthly.ts — Zod schemas for monthly + weekly
+    validations/entry.ts   — Zod schema for daily entries
+    validations/onboarding.ts — Zod schema for onboarding
+    validations/monthly.ts — Zod schema for monthly setups
+    validations/weekly.ts  — Zod schema for weekly reviews
     validations/common.ts  — shared field size bounds
   theme/index.ts           — Mantine theme (brand tokens)
 prisma/

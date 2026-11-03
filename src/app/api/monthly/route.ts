@@ -25,11 +25,3 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ setup: toMonthlyView(setup) });
 }
 
-export async function GET() {
-  const user = await requireUser();
-  const setups = await prisma.monthlySetup.findMany({
-    where: { userId: user.id },
-    orderBy: { monthNumber: 'asc' },
-  });
-  return NextResponse.json({ setups: setups.map(toMonthlyView) });
-}
