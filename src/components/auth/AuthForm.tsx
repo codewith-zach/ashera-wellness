@@ -61,30 +61,35 @@ export function AuthForm({ mode }: Props) {
   return (
     <MotionFade>
       <Paper
-        radius="lg"
+        radius="xl"
         p="xl"
         maw={440}
         w="100%"
-        style={{
-          background: 'rgba(255,255,255,0.92)',
-          border: '1px solid rgba(122,158,126,0.14)',
-          boxShadow: '0 12px 60px rgba(122,158,126,0.18)',
-        }}
+        className="glass-card"
       >
         <form onSubmit={submit}>
           <Stack gap="md">
             <Box ta="center" mb={4}>
-              <Text fz={34} mb={2}>✿</Text>
+              <Text
+                ff="Playfair Display, serif"
+                c="sage.7"
+                fw={500}
+                fz={26}
+                style={{ letterSpacing: '0.04em' }}
+              >
+                Ashera
+              </Text>
+              <Text fz={30} mb={2} mt={4}>✿</Text>
               <Title
                 order={1}
                 ff="Playfair Display, serif"
                 c="sage.7"
                 fw={500}
-                fz={30}
+                fz={28}
               >
                 {isSignup ? 'Begin your journal' : 'Welcome back'}
               </Title>
-              <Text c="sage.6" fz="sm" fs="italic" ff="Playfair Display, serif">
+              <Text c="sage.6" fz="sm" fs="italic" ff="Playfair Display, serif" mt={4}>
                 {isSignup
                   ? 'A few quiet moments a day, gently kept.'
                   : 'Your journal is waiting patiently.'}

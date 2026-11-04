@@ -117,11 +117,7 @@ export default async function HistoryPage({
                       href={`/journal/${e.date}`}
                       radius="lg"
                       p={{ base: 'md', sm: 'lg' }}
-                      style={{
-                        background: 'rgba(255,255,255,0.88)',
-                        border: '1px solid rgba(122,158,126,0.10)',
-                        transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-                      }}
+                      className="petal-card lift-card"
                     >
                       <Group justify="space-between" wrap="nowrap" align="flex-start" gap="sm">
                         <Stack gap={4} style={{ minWidth: 0, flex: 1 }}>

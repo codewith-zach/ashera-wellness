@@ -29,12 +29,11 @@ export function ClientCard({ client }: { client: Client }) {
         href={`/coach/client/${client.id}`}
         radius="lg"
         p="lg"
+        className="petal-card lift-card"
         style={{
-          background: 'rgba(255,255,255,0.90)',
           border: client.atRisk
             ? '1.5px solid rgba(212,130,122,0.45)'
-            : '1px solid rgba(122,158,126,0.12)',
-          transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+            : undefined,
         }}
       >
         <Stack gap={10}>

@@ -1,17 +1,18 @@
 import { Box, Center, Container, Stack, Text, Title } from '@mantine/core';
 import { LinkButton } from '@/components/ui/links';
+import { AmbientPetals } from '@/components/auth/AmbientPetals';
 
 export default function NotFound() {
   return (
     <Box
       mih="100vh"
+      className="cream-bg"
       style={{
-        background:
-          'radial-gradient(circle at 20% 20%, rgba(232,196,184,0.18), transparent 40%), radial-gradient(circle at 80% 80%, rgba(122,158,126,0.14), transparent 40%), #F5F0EA',
         display: 'flex',
         alignItems: 'center',
       }}
     >
+      <AmbientPetals count={8} />
       <Container size="sm">
         <Center>
           <Stack align="center" gap="lg" ta="center">

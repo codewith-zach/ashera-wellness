@@ -2,10 +2,12 @@
 
 import {
   AppShell,
+  Box,
   Burger,
   Group,
   NavLink,
   ScrollArea,
+  Text,
   Title,
   UnstyledButton,
 } from '@mantine/core';
@@ -80,9 +82,9 @@ export function AppShellClient({
     >
       <AppShell.Header
         style={{
-          background: 'rgba(245,240,234,0.85)',
-          backdropFilter: 'blur(8px)',
-          borderBottom: '1px solid rgba(122,158,126,0.15)',
+          background: 'rgba(245,240,234,0.82)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(122,158,126,0.14)',
         }}
       >
         <Group
@@ -137,7 +139,18 @@ export function AppShellClient({
           borderRight: '1px solid rgba(122,158,126,0.12)',
         }}
       >
-        <ScrollArea h="100%" type="never">
+        <ScrollArea h="100%" type="never" style={{ display: 'flex', flexDirection: 'column' }}>
+          <Text
+            fz="xs"
+            c="sage.5"
+            tt="uppercase"
+            lts={3}
+            fw={600}
+            mb="xs"
+            px="xs"
+          >
+            Your journal
+          </Text>
           {visibleNav.map(({ href, label, icon: Icon }) => {
             const active =
               pathname === href ||
@@ -161,6 +174,19 @@ export function AppShellClient({
               />
             );
           })}
+          <Box
+            mt="xl"
+            p="md"
+            style={{
+              borderRadius: 16,
+              background: 'linear-gradient(140deg, rgba(122,158,126,0.10), rgba(232,196,184,0.12))',
+              border: '1px solid rgba(122,158,126,0.14)',
+            }}
+          >
+            <Text fz="sm" c="sage.8" fs="italic" ff="Playfair Display, serif" lh={1.5}>
+              &ldquo;Small consistent care beats grand gestures.&rdquo;
+            </Text>
+          </Box>
         </ScrollArea>
       </AppShell.Navbar>
 
