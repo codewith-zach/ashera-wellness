@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { AuthForm } from '@/components/auth/AuthForm';
 import { AmbientPetals } from '@/components/auth/AmbientPetals';
 
-export const metadata = { title: 'Sign in' };
+export const metadata = { title: { absolute: 'Sign in · Ashe Ra' } };
 export const dynamic = 'force-dynamic';
 
 export default async function LoginPage() {

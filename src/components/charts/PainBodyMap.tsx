@@ -34,7 +34,7 @@ function PainRegion({
       strokeWidth={1}
       aria-label={`${area}: ${count} occurrence${count === 1 ? '' : 's'}`}
     >
-      <title>{label ?? area}: {count}</title>
+      <title>{`${label ?? area}: ${count}`}</title>
     </path>
   );
 }

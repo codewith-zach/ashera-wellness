@@ -13,7 +13,7 @@ import { PainBodyMap } from '@/components/charts/PainBodyMap';
 import { MotionFade } from '@/components/animations/MotionFade';
 import dayjs from 'dayjs';
 
-export const metadata = { title: 'Advanced Insights' };
+export const metadata = { title: { absolute: 'Advanced Insights · Ashe Ra' } };
 export const dynamic = 'force-dynamic';
 
 export default async function AdvancedInsightsPage() {

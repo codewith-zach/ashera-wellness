@@ -1,4 +1,4 @@
-# Ashe Ra Wellness Journal
+# Ashera Wellness Journal
 
 A warm, sage-toned digital companion to a printed wellness journal. Daily
 check-ins with 11 body-and-mind sections, streaks and gentle celebrations,

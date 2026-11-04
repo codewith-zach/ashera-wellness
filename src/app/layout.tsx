@@ -9,10 +9,7 @@ import { QueryProvider } from '@/components/providers/QueryProvider';
 import { RegisterSW } from '@/components/pwa/RegisterSW';
 
 export const metadata: Metadata = {
-  title: {
-    template: '%s · Ashe Ra',
-    default: 'Ashe Ra Wellness Journal',
-  },
+  title: 'Ashe Ra Wellness Journal',
   description:
     'A living, daily companion to the Ashe Ra wellness journal — written for your body, by you.',
   applicationName: 'Ashe Ra',

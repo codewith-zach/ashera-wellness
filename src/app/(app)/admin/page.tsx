@@ -6,7 +6,7 @@ import { computeStreak } from '@/lib/utils/streak';
 import { MotionFade } from '@/components/animations/MotionFade';
 import dayjs from 'dayjs';
 
-export const metadata = { title: 'Admin' };
+export const metadata = { title: { absolute: 'Admin · Ashe Ra' } };
 export const dynamic = 'force-dynamic';
 
 const ROLE_COLORS: Record<string, string> = {

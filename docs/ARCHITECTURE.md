@@ -124,7 +124,7 @@ email). Coaches never see clients who didn't link to them.
 
 1. If all five sections are cached for **today** → serve the cache.
 2. Otherwise build prompts from the user's entries, call ZhipuAI
-   (`ZAI_API_KEY`, model from `ZAI_MODEL`, default `glm-4-flash`).
+   (`ZAI_API_KEY`, model from `ZAI_MODEL`, default `glm-4.5-flash`).
 3. Any failure — no key, timeout, bad response — falls back to the
    rule-based callouts in `lib/insights/local-callouts.ts`.
 4. Results persist to `AiInsightCache` (one refresh per user per day).

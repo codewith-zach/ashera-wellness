@@ -8,7 +8,7 @@ Running Ashe Ra in production — environment, deployment, cron, security.
 | --- | --- | --- |
 | `DATABASE_URL` | **yes** | PostgreSQL connection string (Supabase / Neon / RDS / self-hosted) |
 | `ZAI_API_KEY` | no | Enables AI insight callouts (ZhipuAI). Without it: rule-based fallback |
-| `ZAI_MODEL` | no | Model override (default `glm-4-flash`) |
+| `ZAI_MODEL` | no | Model override (default `glm-4.5-flash`) |
 | `RESEND_API_KEY` | no | Enables real reminder emails. Without it the cron dry-runs and logs |
 | `RESEND_FROM` | no | Verified Resend sender, e.g. `Ashe Ra <hello@yourdomain.com>` |
 | `CRON_SECRET` | no* | Bearer token protecting `/api/cron/reminders`. *Required in production if the endpoint should do anything; without it the endpoint refuses to run outside local dev |
