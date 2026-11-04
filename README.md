@@ -63,7 +63,7 @@ src/
     charts/                — Recharts wrappers (MoodSparkline, EnergyStressChart, SleepBarChart, SleepDoughnut, SymptomBars, SymptomHeatmap, SelfCareDonut, ChartCard, CountUp)
     dashboard/             — StatsBar, TodayStatusCard, CheckInHeatmap, HydrationRing, DashboardCharts, MonthlyAffirmation, GentleReturn
     history/               — HistoryFilters, HistoryPagination
-    insights/              — InsightsHero, PeriodTabs, InsightCallout
+    insights/              — InsightsHero, PeriodTabs, AiInsightSection
     journal/               — JournalForm + section primitives (MoodSelector, WaterCups, ChipMulti, etc.)
     layout/                — AppShellClient, StreakBadge
     milestones/            — MilestoneCelebration overlay
