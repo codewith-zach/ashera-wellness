@@ -1,38 +1,39 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
-import { useState } from 'react';
 
 const PETALS = ['🌸', '🌿', '✿', '🌼'];
 
-interface DriftPetal {
-  left: number;
-  fontSize: number;
-  duration: number;
-  delay: number;
-  drift: number;
-  emojiIndex: number;
+/**
+ * Deterministic 0..1 pseudo-random from a seed. Using index-seeded values
+ * (instead of Math.random) keeps the server and client renders identical,
+ * so hydration never mismatches.
+ */
+function pseudo(seed: number): number {
+  const x = Math.sin(seed * 999.73) * 10000;
+  return x - Math.floor(x);
+}
+
+function buildPetals(count: number) {
+  return Array.from({ length: count }, (_, i) => ({
+    left: pseudo(i * 5 + 1) * 100,
+    fontSize: 16 + pseudo(i * 5 + 2) * 18,
+    duration: 22 + pseudo(i * 5 + 3) * 26,
+    delay: -pseudo(i * 5 + 4) * 40,
+    drift: (pseudo(i * 5 + 5) - 0.5) * 120,
+    emojiIndex: i % PETALS.length,
+  }));
 }
 
 /**
  * Slow-drifting decorative petals for full-page backgrounds.
- * Geometry is generated once per mount in a lazy initializer so no impure
- * calls happen during render; hidden entirely for reduced-motion users.
+ * Hidden entirely for reduced-motion users.
  */
 export function AmbientPetals({ count = 12 }: { count?: number }) {
   const reduced = useReducedMotion();
-  const [petals] = useState(() =>
-    Array.from({ length: count }, (_, i) => ({
-      left: Math.random() * 100,
-      fontSize: 16 + Math.random() * 18,
-      duration: 22 + Math.random() * 26,
-      delay: -Math.random() * 40,
-      drift: (Math.random() - 0.5) * 120,
-      emojiIndex: i % PETALS.length,
-    })),
-  );
-
   if (reduced) return null;
+
+  const petals = buildPetals(count);
 
   return (
     <div
