@@ -29,7 +29,7 @@ const th: React.CSSProperties = {
 const td: React.CSSProperties = {
   padding: '10px 12px',
   fontSize: 14,
-  color: '#3a5a3f',
+  color: 'var(--mantine-color-sage-8)',
   borderBottom: '1px solid rgba(122,158,126,0.08)',
   whiteSpace: 'nowrap',
 };

@@ -29,7 +29,8 @@ function PainRegion({
   return (
     <path
       d={d}
-      fill={count > 0 ? fill : 'rgba(221,233,222,0.5)'}
+      fill={count > 0 ? fill : undefined}
+      style={count > 0 ? undefined : { fill: 'var(--ashera-empty)' }}
       stroke="rgba(74,112,80,0.3)"
       strokeWidth={1}
       aria-label={`${area}: ${count} occurrence${count === 1 ? '' : 's'}`}
@@ -71,7 +72,7 @@ export function PainBodyMap({ painCounts, maxCount }: Props) {
           d="M80 10 C60 10 46 24 46 44 C46 62 58 76 80 80 C102 76 114 62 114 44 C114 24 100 10 80 10 Z"
         />
         {/* Neck */}
-        <path d="M68 78 L72 100 L88 100 L92 78 Z" fill="rgba(221,233,222,0.6)" stroke="rgba(74,112,80,0.2)" strokeWidth={1} />
+        <path d="M68 78 L72 100 L88 100 L92 78 Z" style={{ fill: "var(--ashera-empty)" }} stroke="rgba(74,112,80,0.2)" strokeWidth={1} />
         {/* Torso / Stomach */}
         <PainRegion
           area="Stomach"
@@ -113,21 +114,21 @@ export function PainBodyMap({ painCounts, maxCount }: Props) {
         {/* Left leg */}
         <path
           d="M56 196 L50 280 L68 280 L72 196 Z"
-          fill="rgba(221,233,222,0.5)"
+          style={{ fill: "var(--ashera-empty)" }}
           stroke="rgba(74,112,80,0.2)"
           strokeWidth={1}
         />
         {/* Right leg */}
         <path
           d="M104 196 L110 280 L92 280 L88 196 Z"
-          fill="rgba(221,233,222,0.5)"
+          style={{ fill: "var(--ashera-empty)" }}
           stroke="rgba(74,112,80,0.2)"
           strokeWidth={1}
         />
         {/* Left foot */}
-        <path d="M50 280 L46 294 L70 294 L68 280 Z" fill="rgba(221,233,222,0.5)" stroke="rgba(74,112,80,0.2)" strokeWidth={1} />
+        <path d="M50 280 L46 294 L70 294 L68 280 Z" style={{ fill: "var(--ashera-empty)" }} stroke="rgba(74,112,80,0.2)" strokeWidth={1} />
         {/* Right foot */}
-        <path d="M92 280 L90 294 L114 294 L110 280 Z" fill="rgba(221,233,222,0.5)" stroke="rgba(74,112,80,0.2)" strokeWidth={1} />
+        <path d="M92 280 L90 294 L114 294 L110 280 Z" style={{ fill: "var(--ashera-empty)" }} stroke="rgba(74,112,80,0.2)" strokeWidth={1} />
       </svg>
 
       {/* Legend */}

@@ -19,7 +19,7 @@ export function CheckInHeatmap({ loggedDates, days = 30 }: Props) {
           Last {days} days
         </Text>
         <Group gap="md" wrap="wrap">
-          <LegendDot color="rgba(221,233,222,0.7)" label="Missed" />
+          <LegendDot color="var(--ashera-empty)" label="Missed" />
           <LegendDot color="#7A9E7E" label="Logged" />
           <LegendDot color="#C9A96E" label="Today" border />
         </Group>
@@ -41,7 +41,7 @@ export function CheckInHeatmap({ loggedDates, days = 30 }: Props) {
                   width: 'clamp(14px, 3.2vw, 18px)',
                   height: 'clamp(14px, 3.2vw, 18px)',
                   borderRadius: 4,
-                  background: logged ? '#7A9E7E' : 'rgba(221,233,222,0.55)',
+                  background: logged ? '#7A9E7E' : 'var(--ashera-empty)',
                   border: isToday ? '2px solid #C9A96E' : 'none',
                   boxShadow: logged ? '0 1px 4px rgba(122,158,126,0.25)' : 'none',
                   transition: 'transform 0.15s ease',

@@ -15,7 +15,7 @@ interface Props {
 }
 
 function colorForCount(count: number): string {
-  if (count === 0) return 'rgba(221,233,222,0.55)';
+  if (count === 0) return 'var(--ashera-empty)';
   if (count === 1) return 'rgba(232,196,184,0.45)';
   if (count === 2) return 'rgba(212,130,122,0.55)';
   if (count === 3) return 'rgba(212,130,122,0.75)';

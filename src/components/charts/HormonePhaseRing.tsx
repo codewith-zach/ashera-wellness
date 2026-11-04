@@ -51,7 +51,7 @@ export function HormonePhaseRing({ entries, days = 30 }: Props) {
       {/* Calendar grid */}
       <Group gap={4} wrap="wrap">
         {cells.map(({ date, phase }) => {
-          const color = phase ? PHASE_COLORS[phase] ?? '#dde9de' : 'rgba(221,233,222,0.55)';
+          const color = phase ? PHASE_COLORS[phase] ?? 'var(--ashera-empty)' : 'var(--ashera-empty)';
           const isToday = date === today.format('YYYY-MM-DD');
           return (
             <Tooltip

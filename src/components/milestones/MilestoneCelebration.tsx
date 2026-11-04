@@ -112,6 +112,7 @@ export function MilestoneCelebration({ milestone, onDismiss }: Props) {
               gap="md"
               p="xl"
               maw={520}
+              className="milestone-card"
               style={{
                 background: 'rgba(255,255,255,0.96)',
                 borderRadius: 28,

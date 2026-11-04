@@ -42,8 +42,8 @@ export function MoodSelector({ value, onChange }: Props) {
                   borderRadius: 20,
                   fontSize: 36,
                   background: active
-                    ? 'radial-gradient(circle, rgba(181,206,184,0.7), rgba(122,158,126,0.25))'
-                    : 'rgba(221,233,222,0.4)',
+                    ? 'radial-gradient(circle, rgba(122,158,126,0.40), rgba(122,158,126,0.12))'
+                    : 'var(--ashera-empty)',
                   border: active
                     ? '2px solid #7A9E7E'
                     : '2px solid transparent',

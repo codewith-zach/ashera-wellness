@@ -35,7 +35,7 @@ export function WaterCups({ value, onChange, goal = 8 }: Props) {
                 minHeight: 44,
                 borderRadius: '8px 8px 14px 14px',
                 border: '2px solid #7A9E7E',
-                background: 'rgba(221,233,222,0.3)',
+                background: 'var(--ashera-empty)',
                 position: 'relative',
                 overflow: 'hidden',
                 cursor: 'pointer',

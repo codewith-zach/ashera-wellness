@@ -32,7 +32,7 @@ export function HydrationRing({ cups, goal = 8, size }: Props) {
             cx={dim / 2}
             cy={dim / 2}
             r={radius}
-            stroke="#dde9de"
+            style={{ stroke: 'var(--ashera-empty)' }}
             strokeWidth={stroke}
             fill="none"
           />
