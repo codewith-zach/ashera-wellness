@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireUser } from '@/lib/auth';
+import { getCurrentUser } from '@/lib/auth';
+import { unauthorized } from '@/lib/api';
 import { prisma } from '@/lib/db';
 import { todayISO } from '@/lib/utils/date';
 import { unpackArr } from '@/lib/utils/json-array';
@@ -27,7 +28,8 @@ const SECTIONS = ['mood', 'sleep', 'symptoms', 'selfCare', 'overall'] as const;
 type Section = (typeof SECTIONS)[number];
 
 export async function GET(req: NextRequest) {
-  const user = await requireUser();
+  const user = await getCurrentUser();
+  if (!user) return unauthorized();
   const { searchParams } = new URL(req.url);
   const period = periodFromQuery(searchParams.get('period'));
   const start = periodStart(period);

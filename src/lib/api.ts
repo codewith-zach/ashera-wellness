@@ -6,6 +6,17 @@ export function badRequest(message: string) {
   return NextResponse.json({ error: message }, { status: 400 });
 }
 
+export function unauthorized() {
+  return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+}
+
+export function tooManyRequests(retryAfterSec: number) {
+  return NextResponse.json(
+    { error: 'Too many attempts. Please slow down.' },
+    { status: 429, headers: { 'Retry-After': String(retryAfterSec) } },
+  );
+}
+
 export function validationError(message: string, error: ZodError) {
   return NextResponse.json(
     { error: message, issues: flattenError(error) },

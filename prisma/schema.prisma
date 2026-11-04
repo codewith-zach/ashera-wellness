@@ -1,24 +1,24 @@
 // Ashe Ra Wellness Journal — Prisma schema (PRD §4)
-// Local dev uses SQLite. String[] is stored as JSON for SQLite compatibility;
-// switch provider to "postgresql" for Supabase deployment and replace the
-// `Json` array fields with `String[]`.
+// PostgreSQL. String[] is stored as JSON-encoded text for portability; the
+// (de)serialisation lives in src/lib/entry-mapper.ts and utils/json-array.ts.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
   id               String         @id @default(cuid())
   email            String         @unique
+  passwordHash     String? // null until the user sets a password
   displayName      String?
   avatarUrl        String?
-  role             String         @default("client") // "client" | "coach"
-  coachId          String?        // FK → coach User.id
+  role             String         @default("client") // "client" | "coach" | "admin"
+  coachId          String? // FK → coach User.id
   onboardedAt      DateTime?
   journalStartDate DateTime?
   milestones       String         @default("[]")
@@ -32,9 +32,23 @@ model User {
   weeklyReviews    WeeklyReview[]
   onboarding       Onboarding?
   aiInsightCaches  AiInsightCache[]
+  sessions         Session[]
 
   coach            User?          @relation("CoachClients", fields: [coachId], references: [id])
   clients          User[]         @relation("CoachClients")
+}
+
+model Session {
+  // id is the SHA-256 of the opaque cookie token — the raw token never
+  // touches the database.
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model AiInsightCache {

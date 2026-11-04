@@ -1,6 +1,6 @@
 # Ashe Ra Wellness Journal
 
-Phase-1 → Phase-3 implementation of the [Ashe Ra Wellness Journal PRD](./Ashe_Ra_Wellness_Journal_PRD.pdf).
+Production-ready implementation of the [Ashe Ra Wellness Journal PRD](./Ashe_Ra_Wellness_Journal_PRD.pdf).
 
 A warm, sage-toned digital companion to the printed wellness journal — daily entries, streak tracking, and the foundations for the dashboard, insights, and weekly/monthly cadences.
 
@@ -23,39 +23,60 @@ A warm, sage-toned digital companion to the printed wellness journal — daily e
 - **Email reminder scaffolding**: brand-styled HTML templates (daily, weekly, milestone), `/api/cron/reminders` cron handler protected by `CRON_SECRET`, hourly Vercel Cron config in `vercel.json`. Dry-runs and logs unless `RESEND_API_KEY` is set. Reminders fire at the user's preferred hour in their own timezone (captured from the browser at onboarding, refreshed on the profile page; UTC when none is set).
 - **Animations** (PRD §5): reusable `fadeUp`, `staggerContainer/Item`, `pageTransition`, `springSoft`. Every animated component checks `useReducedMotion`.
 
-## Deferred (later phases)
+## Auth, roles, and accounts
 
-- **Auth**: a single dev user is auto-created (`you@ashera.local`). A later phase swaps this for Supabase magic-link auth. Production builds refuse to run with dev auth unless `ALLOW_DEV_AUTH=true` is explicitly set.
-- **Postgres / Supabase**: the schema is SQLite-friendly. Switching to Supabase needs `provider = "postgresql"` in `prisma/schema.prisma`, replacing the JSON-packed `String` array fields with native `String[]`, and the Supabase env vars.
-- **Real email delivery**: needs `RESEND_API_KEY`, `RESEND_FROM` (verified sender), `CRON_SECRET`, and `NEXT_PUBLIC_APP_URL` in `.env.local`. Without these, the cron handler runs in dry mode and logs intended sends.
+Real account auth: email + password signup, server-side sessions (30-day
+httpOnly cookies; only the SHA-256 of the session token is stored), scrypt
+password hashing via node:crypto, per-IP rate limiting on the auth routes,
+and a 401 for unauthenticated API calls.
+
+Roles on `User.role`: `client` (default) · `coach` (sees linked clients at
+`/coach` — clients link themselves from their profile page by coach email)
+· `admin` (sees everyone at `/admin`).
 
 ## Running locally
 
 ```bash
 npm install
-npx prisma db push        # creates SQLite ./prisma/dev.db
-node scripts/seed.mjs     # optional: 14 days of demo data so charts have something to draw
-npm run dev               # http://localhost:3000
+createdb ashera                     # once; local PostgreSQL
+npx prisma db push                  # create the schema
+node scripts/seed.mjs --make-admin  # demo data + admin dev user
+node scripts/seed-coach.mjs         # optional: demo coach + 2 clients
+npm run dev                         # http://localhost:3000
 ```
+
+Demo logins (password `DEV_PASSWORD`, default `ashera-dev-1`):
+`you@ashera.local` (admin) · `coach@ashera.local` · `amara@ashera.local` ·
+`priya@ashera.local`.
 
 Useful checks: `npm run typecheck`, `npm run lint`, `npm test` (Vitest), `npm run build`.
 
-No cloud accounts needed. First load auto-creates the dev user and lands you on `/onboarding` (or `/dashboard` if seeded).
+## Deploying to production
 
-## Switching to Supabase + Postgres later
+1. **Database** — point `DATABASE_URL` at a managed PostgreSQL (Supabase /
+   Neon / RDS). Run `npx prisma db push` (or `prisma migrate dev` to adopt
+   migrations) against it.
+2. **Secrets** — set `DATABASE_URL` plus, when you want reminders:
+   `RESEND_API_KEY`, `RESEND_FROM`, `CRON_SECRET`, `NEXT_PUBLIC_APP_URL`.
+   `ZAI_API_KEY` enables the AI insight callouts.
+3. **Vercel** — import the repo; `vercel.json` already schedules the hourly
+   cron hitting `/api/cron/reminders` (Vercel sends `Authorization: Bearer
+   $CRON_SECRET` automatically).
+4. **First admin** — sign up normally, then promote from a SQL console:
+   `UPDATE "User" SET role='admin' WHERE email='you@example.com';`
 
-1. Update `prisma/schema.prisma` provider to `postgresql`.
-2. Replace JSON-packed array fields (`bodyFeelings`, `herbalTeas`, `afterMeals`, `symptoms`, `painAreas`, `todayPracticed`, `selfCare`, `completedSections`, `bodyRelationship`, etc.) with `String[]` and remove the `@default("[]")`.
-3. Delete the manual JSON pack/unpack in `src/lib/entry-mapper.ts` and `src/app/api/onboarding/route.ts` — Prisma handles arrays natively.
-4. Set `DATABASE_URL` to your Supabase Postgres connection string.
-5. Replace `src/lib/auth.ts` with Supabase Auth (cookie/JWT-based).
+Notes: the in-memory login rate limiter is per-instance; swap in a shared
+store (e.g. Upstash) before scaling horizontally. Without `RESEND_API_KEY`
+the cron handler dry-runs and logs.
 
 ## Project structure
 
 ```
 src/
   app/
-    (app)/                 — authenticated shell (dashboard/journal/history/monthly/weekly/profile)
+    (app)/                 — authenticated shell (dashboard/journal/history/monthly/weekly/profile/coach/admin)
+    login/ · signup/        — auth pages (outside the shell)
+    api/auth/               — signup, login, logout
     api/                   — write surface used by the UI (entries, monthly, weekly, onboarding, reminders) + insights/streak, insights/ai, export, cron
     onboarding/            — top-level wizard, no shell
   components/
@@ -65,12 +86,13 @@ src/
     history/               — HistoryFilters, HistoryPagination
     insights/              — InsightsHero, PeriodTabs, AiInsightSection
     journal/               — JournalForm + section primitives (MoodSelector, WaterCups, ChipMulti, etc.)
+    auth/                 — AuthForm (shared login/signup card)
     layout/                — AppShellClient, StreakBadge
     milestones/            — MilestoneCelebration overlay
     monthly/               — MonthlyWizard (7 steps)
     weekly/                — WeeklyForm (sticky-note grid)
     onboarding/            — OnboardingWizard
-    profile/               — ReminderSettings
+    profile/               — ReminderSettings, CoachLinkSettings
     providers/             — React Query
   lib/
     api.ts                 — shared request helpers (JSON body parsing, 400s)

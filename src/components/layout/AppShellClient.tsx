@@ -7,6 +7,7 @@ import {
   NavLink,
   ScrollArea,
   Title,
+  UnstyledButton,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -15,12 +16,14 @@ import {
   CalendarRange,
   History,
   Home,
+  LogOut,
+  ShieldCheck,
   Sparkles,
   Stethoscope,
   User,
 } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { StreakBadge } from './StreakBadge';
 
 interface NavItem {
@@ -28,6 +31,7 @@ interface NavItem {
   label: string;
   icon: React.ElementType;
   coachOnly?: boolean;
+  adminOnly?: boolean;
 }
 
 const NAV: NavItem[] = [
@@ -38,6 +42,7 @@ const NAV: NavItem[] = [
   { href: '/monthly', label: 'Monthly Setup', icon: CalendarDays },
   { href: '/weekly', label: 'Weekly Review', icon: CalendarRange },
   { href: '/coach', label: 'Coach Dashboard', icon: Stethoscope, coachOnly: true },
+  { href: '/admin', label: 'Admin', icon: ShieldCheck, adminOnly: true },
   { href: '/profile', label: 'Profile', icon: User },
 ];
 
@@ -50,7 +55,18 @@ export function AppShellClient({
 }) {
   const [opened, { toggle, close }] = useDisclosure();
   const pathname = usePathname();
-  const visibleNav = NAV.filter((n) => !n.coachOnly || userRole === 'coach');
+  const router = useRouter();
+  const visibleNav = NAV.filter(
+    (n) =>
+      (!n.coachOnly || userRole === 'coach') &&
+      (!n.adminOnly || userRole === 'admin'),
+  );
+
+  async function logout() {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+    router.refresh();
+  }
 
   return (
     <AppShell
@@ -99,7 +115,18 @@ export function AppShellClient({
               </Title>
             </Group>
           </Group>
-          <StreakBadge />
+          <Group gap="xs" wrap="nowrap">
+            <StreakBadge />
+            <UnstyledButton
+              onClick={logout}
+              aria-label="Sign out"
+              title="Sign out"
+              c="sage.6"
+              style={{ padding: 6, borderRadius: 8, lineHeight: 0 }}
+            >
+              <LogOut size={17} />
+            </UnstyledButton>
+          </Group>
         </Group>
       </AppShell.Header>
 

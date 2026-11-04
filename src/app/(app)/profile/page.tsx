@@ -1,11 +1,19 @@
 import { Anchor, Card, Container, Group, Stack, Text, Title } from '@mantine/core';
 import { requireUser } from '@/lib/auth';
+import { prisma } from '@/lib/db';
 import { ReminderSettings } from '@/components/profile/ReminderSettings';
+import { CoachLinkSettings } from '@/components/profile/CoachLinkSettings';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ProfilePage() {
   const user = await requireUser();
+  const withCoach = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: {
+      coach: { select: { displayName: true, email: true } },
+    },
+  });
   return (
     <Container size="sm" py="lg">
       <Stack gap="lg">
@@ -45,6 +53,8 @@ export default async function ProfilePage() {
           initialTimezone={user.timezone}
         />
 
+        <CoachLinkSettings coach={withCoach?.coach ?? null} />
+
         <Card radius="lg" p="lg" style={{ background: 'rgba(255,255,255,0.85)' }}>
           <Stack gap="sm">
             <Text c="sage.7" ff="Playfair Display, serif" fz="lg" fw={500}>
@@ -65,9 +75,9 @@ export default async function ProfilePage() {
         </Card>
 
         <Text c="sage.6" fz="xs">
-          Account settings (Supabase auth, magic-link email) will land in Phase 1.2. Reminder
-          email delivery uses Resend — set <code>RESEND_API_KEY</code> in your env to enable
-          actual sending; without it, the cron handler dry-runs and logs.
+          Reminder email delivery uses Resend — set <code>RESEND_API_KEY</code> in
+          your env to enable actual sending; without it, the cron handler dry-runs
+          and logs.
         </Text>
       </Stack>
     </Container>

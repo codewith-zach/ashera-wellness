@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { requireUser } from '@/lib/auth';
+import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
-import { readJsonObject, badRequest } from '@/lib/api';
+import { readJsonObject, badRequest, unauthorized } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,7 +18,8 @@ const schema = z.object({
 });
 
 export async function PATCH(req: NextRequest) {
-  const user = await requireUser();
+  const user = await getCurrentUser();
+  if (!user) return unauthorized();
   const json = await readJsonObject(req);
   if (!json.ok) return badRequest('Invalid JSON body');
   const parsed = schema.safeParse(json.body);

@@ -1,9 +1,12 @@
 // Phase-2 verification seed: 14 days of varied entries for the dev user.
-// Run: node scripts/seed.mjs
+// Run: node scripts/seed.mjs [--make-admin]
+// Demo login: you@ashera.local / DEV_PASSWORD (default "ashera-dev-1")
 import { PrismaClient } from '@prisma/client';
+import { passwordHashForDev, isoDate } from './lib.mjs';
 
 const prisma = new PrismaClient();
 const DEV_EMAIL = 'you@ashera.local';
+const makeAdmin = process.argv.includes('--make-admin');
 
 const SYMPTOMS = [
   ['Headache', 'Anxiety'],
@@ -39,16 +42,6 @@ const SELF_CARE = [
   ['Meditation', 'Nature Walk'],
 ];
 
-function pad(n) {
-  return String(n).padStart(2, '0');
-}
-
-function isoDate(daysAgo) {
-  const d = new Date();
-  d.setDate(d.getDate() - daysAgo);
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
-
 async function main() {
   const user = await prisma.user.upsert({
     where: { email: DEV_EMAIL },
@@ -56,10 +49,15 @@ async function main() {
     create: {
       email: DEV_EMAIL,
       displayName: 'Friend',
+      passwordHash: passwordHashForDev(),
       onboardedAt: new Date(),
       journalStartDate: new Date(),
     },
   });
+  if (makeAdmin) {
+    await prisma.user.update({ where: { id: user.id }, data: { role: 'admin' } });
+    console.log('Dev user promoted to admin — visit /admin');
+  }
 
   for (let i = 0; i < 14; i++) {
     const date = isoDate(i);

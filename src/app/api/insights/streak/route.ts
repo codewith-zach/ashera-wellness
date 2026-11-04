@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
-import { requireUser } from '@/lib/auth';
+import { getCurrentUser } from '@/lib/auth';
+import { unauthorized } from '@/lib/api';
 import { prisma } from '@/lib/db';
 import { computeStreak, entriesThisWeek } from '@/lib/utils/streak';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const user = await requireUser();
+  const user = await getCurrentUser();
+  if (!user) return unauthorized();
   const dates = (
     await prisma.dailyEntry.findMany({
       where: { userId: user.id },

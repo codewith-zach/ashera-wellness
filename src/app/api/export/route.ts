@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireUser } from '@/lib/auth';
+import { getCurrentUser } from '@/lib/auth';
+import { unauthorized } from '@/lib/api';
 import { prisma } from '@/lib/db';
 import { toView } from '@/lib/entry-mapper';
 import { computeStreak } from '@/lib/utils/streak';
@@ -36,7 +37,8 @@ function escCsv(value: unknown): string {
 }
 
 export async function GET(req: NextRequest) {
-  const user = await requireUser();
+  const user = await getCurrentUser();
+  if (!user) return unauthorized();
   const { searchParams } = new URL(req.url);
   const format = searchParams.get('format') ?? 'csv';
 

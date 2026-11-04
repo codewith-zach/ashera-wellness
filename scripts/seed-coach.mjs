@@ -1,22 +1,17 @@
 /**
  * Seed a demo coach user and two demo clients linked to them.
- * Run: node scripts/seed-coach.mjs
+ * Run: node scripts/seed-coach.mjs [--make-dev-coach] [--make-admin]
  *
- * To switch the dev user to coach mode (to see the coach dashboard):
- *   node scripts/seed-coach.mjs --make-dev-coach
+ * Demo logins use DEV_PASSWORD (default "ashera-dev-1"):
+ *   you@ashera.local · coach@ashera.local · amara@ashera.local · priya@ashera.local
  */
 import { PrismaClient } from '@prisma/client';
+import { passwordHashForDev, isoDate } from './lib.mjs';
 
 const db = new PrismaClient();
 const args = process.argv.slice(2);
 const makeDevCoach = args.includes('--make-dev-coach');
-
-function pad(n) { return String(n).padStart(2, '0'); }
-function isoDate(daysAgo) {
-  const d = new Date();
-  d.setDate(d.getDate() - daysAgo);
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
+const makeAdmin = args.includes('--make-admin');
 
 async function seedEntries(userId, count, dayOffset = 0) {
   for (let i = 0; i < count; i++) {
@@ -45,17 +40,25 @@ async function seedEntries(userId, count, dayOffset = 0) {
 
 async function main() {
   const devUser = await db.user.findUnique({ where: { email: 'you@ashera.local' } });
-  if (!devUser) { console.error('Run npm run dev first to create dev user'); process.exit(1); }
+  if (!devUser) { console.error('Run node scripts/seed.mjs first to create the dev user'); process.exit(1); }
 
   if (makeDevCoach) {
     await db.user.update({ where: { id: devUser.id }, data: { role: 'coach', onboardedAt: new Date() } });
     console.log('Dev user promoted to coach');
   }
+  if (makeAdmin) {
+    await db.user.update({ where: { id: devUser.id }, data: { role: 'admin', onboardedAt: new Date() } });
+    console.log('Dev user promoted to admin — visit /admin');
+  }
 
+  const passwordHash = passwordHashForDev();
   const coachId = makeDevCoach ? devUser.id : (await db.user.upsert({
     where: { email: 'coach@ashera.local' },
     update: {},
-    create: { email: 'coach@ashera.local', displayName: 'The Coach', role: 'coach', onboardedAt: new Date(), journalStartDate: new Date() },
+    create: {
+      email: 'coach@ashera.local', displayName: 'The Coach', role: 'coach',
+      passwordHash, onboardedAt: new Date(), journalStartDate: new Date(),
+    },
   })).id;
 
   const client1 = await db.user.upsert({
@@ -63,7 +66,7 @@ async function main() {
     update: {},
     create: {
       email: 'amara@ashera.local', displayName: 'Amara', role: 'client',
-      coachId, onboardedAt: new Date(), journalStartDate: new Date(),
+      passwordHash, coachId, onboardedAt: new Date(), journalStartDate: new Date(),
     },
   });
   await seedEntries(client1.id, 21, 0);
@@ -74,7 +77,7 @@ async function main() {
     update: {},
     create: {
       email: 'priya@ashera.local', displayName: 'Priya', role: 'client',
-      coachId, onboardedAt: new Date(), journalStartDate: new Date(),
+      passwordHash, coachId, onboardedAt: new Date(), journalStartDate: new Date(),
     },
   });
   await seedEntries(client2.id, 5, 10); // last entry was 10 days ago → at-risk

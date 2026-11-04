@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireUser } from '@/lib/auth';
+import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
-import { readJsonObject, badRequest, validationError } from '@/lib/api';
+import { readJsonObject, badRequest, validationError, unauthorized } from '@/lib/api';
 import { dailyEntrySchema } from '@/lib/validations/entry';
 import { toView, toDbWrite } from '@/lib/entry-mapper';
 import { computeStreak } from '@/lib/utils/streak';
@@ -11,7 +11,8 @@ import { packArr, unpackArr } from '@/lib/utils/json-array';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
-  const user = await requireUser();
+  const user = await getCurrentUser();
+  if (!user) return unauthorized();
   const json = await readJsonObject(req);
   if (!json.ok) return badRequest('Invalid JSON body');
   const parsed = dailyEntrySchema.safeParse(json.body);
