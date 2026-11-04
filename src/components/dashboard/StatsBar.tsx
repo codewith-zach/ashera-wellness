@@ -25,11 +25,7 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
               radius="lg"
               shadow="sm"
               p={{ base: 'sm', sm: 'md' }}
-              style={{
-                background: 'rgba(255,255,255,0.85)',
-                border: '1px solid rgba(122,158,126,0.10)',
-                height: '100%',
-              }}
+              className="petal-card"
             >
               <Stack gap={2}>
                 <Text

@@ -51,7 +51,7 @@ export function ReminderSettings({
   }
 
   return (
-    <Card radius="lg" p="lg" style={{ background: 'rgba(255,255,255,0.85)' }}>
+    <Card radius="lg" p="lg" className="petal-card">
       <Stack gap="md">
         <Group justify="space-between" align="flex-start">
           <Stack gap={2} maw={360}>

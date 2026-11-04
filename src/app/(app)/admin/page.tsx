@@ -107,10 +107,7 @@ export default async function AdminPage() {
                 radius="lg"
                 shadow="sm"
                 p="md"
-                style={{
-                  background: 'rgba(255,255,255,0.88)',
-                  border: '1px solid rgba(122,158,126,0.10)',
-                }}
+                className="petal-card"
               >
                 <Text fz="xs" c="sage.6" tt="uppercase" lts={2}>
                   {s.label}
@@ -124,7 +121,7 @@ export default async function AdminPage() {
         </MotionFade>
 
         <MotionFade delay={0.08}>
-          <Card radius="lg" p="lg" style={{ background: 'rgba(255,255,255,0.90)' }}>
+          <Card radius="lg" p="lg" className="petal-card">
             <Box style={{ overflowX: 'auto' }}>
               <table
                 style={{

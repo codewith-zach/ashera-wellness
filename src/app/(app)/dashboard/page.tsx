@@ -92,7 +92,7 @@ export default async function DashboardPage() {
     <Container size="lg" px={{ base: 'sm', sm: 'md' }} py={{ base: 'md', sm: 'lg' }}>
       <Stack gap="xl">
         <MotionFade>
-          <Box>
+          <Box className="hero-band">
             <Text
               fz={{ base: 'xs', sm: 'sm' }}
               c="sage.6"
@@ -105,7 +105,7 @@ export default async function DashboardPage() {
             <Title
               order={1}
               ff="Playfair Display, serif"
-              c="sage.7"
+              c="sage.8"
               fw={500}
               fz={{ base: 26, xs: 30, sm: 34, md: 40 }}
               lh={1.15}
@@ -120,6 +120,7 @@ export default async function DashboardPage() {
               mt="xs"
               fz={{ base: 'md', sm: 'lg' }}
               lh={1.45}
+              maw={560}
             >
               {dailyAffirmation(today)}
             </Text>
@@ -170,11 +171,7 @@ export default async function DashboardPage() {
         <MotionFade delay={0.15}>
           <Box
             p={{ base: 'md', sm: 'lg' }}
-            style={{
-              background: 'rgba(255,255,255,0.85)',
-              borderRadius: 20,
-              border: '1px solid rgba(122,158,126,0.10)',
-            }}
+            className="petal-card"
           >
             <Stack gap="md">
               <Box>

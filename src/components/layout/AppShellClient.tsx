@@ -10,6 +10,7 @@ import {
   Text,
   Title,
   UnstyledButton,
+  useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -19,9 +20,11 @@ import {
   History,
   Home,
   LogOut,
+  Moon,
   ShieldCheck,
   Sparkles,
   Stethoscope,
+  Sun,
   User,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -58,6 +61,7 @@ export function AppShellClient({
   const [opened, { toggle, close }] = useDisclosure();
   const pathname = usePathname();
   const router = useRouter();
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const visibleNav = NAV.filter(
     (n) =>
       (!n.coachOnly || userRole === 'coach') &&
@@ -80,13 +84,7 @@ export function AppShellClient({
       }}
       padding={{ base: 'xs', sm: 'md' }}
     >
-      <AppShell.Header
-        style={{
-          background: 'rgba(245,240,234,0.82)',
-          backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(122,158,126,0.14)',
-        }}
-      >
+      <AppShell.Header className="app-header">
         <Group
           h="100%"
           px={{ base: 'sm', sm: 'md' }}
@@ -120,6 +118,15 @@ export function AppShellClient({
           <Group gap="xs" wrap="nowrap">
             <StreakBadge />
             <UnstyledButton
+              onClick={toggleColorScheme}
+              aria-label="Toggle evening mode"
+              title={colorScheme === 'dark' ? 'Switch to daylight' : 'Switch to evening'}
+              c="sage.6"
+              style={{ padding: 6, borderRadius: 8, lineHeight: 0 }}
+            >
+              {colorScheme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+            </UnstyledButton>
+            <UnstyledButton
               onClick={logout}
               aria-label="Sign out"
               title="Sign out"
@@ -132,13 +139,7 @@ export function AppShellClient({
         </Group>
       </AppShell.Header>
 
-      <AppShell.Navbar
-        p="md"
-        style={{
-          background: '#FAF6F1',
-          borderRight: '1px solid rgba(122,158,126,0.12)',
-        }}
-      >
+      <AppShell.Navbar p="md" className="app-navbar">
         <ScrollArea h="100%" type="never" style={{ display: 'flex', flexDirection: 'column' }}>
           <Text
             fz="xs"
@@ -174,15 +175,7 @@ export function AppShellClient({
               />
             );
           })}
-          <Box
-            mt="xl"
-            p="md"
-            style={{
-              borderRadius: 16,
-              background: 'linear-gradient(140deg, rgba(122,158,126,0.10), rgba(232,196,184,0.12))',
-              border: '1px solid rgba(122,158,126,0.14)',
-            }}
-          >
+          <Box mt="xl" p="md" className="nav-quote">
             <Text fz="sm" c="sage.8" fs="italic" ff="Playfair Display, serif" lh={1.5}>
               &ldquo;Small consistent care beats grand gestures.&rdquo;
             </Text>

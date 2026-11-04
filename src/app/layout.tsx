@@ -39,13 +39,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <ColorSchemeScript defaultColorScheme="light" />
+        <ColorSchemeScript defaultColorScheme="auto" />
       </head>
       <body className="cream-bg">
         <a href="#main-content" className="skip-nav">
           Skip to content
         </a>
-        <MantineProvider theme={theme} defaultColorScheme="light">
+        <MantineProvider theme={theme} defaultColorScheme="auto">
           <QueryProvider>
             <Notifications position="bottom-center" />
             <div id="main-content">{children}</div>

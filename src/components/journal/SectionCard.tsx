@@ -30,10 +30,7 @@ export function SectionCard({ index, title, hint, icon, children }: Props) {
         radius="lg"
         shadow="sm"
         p={{ base: 'md', sm: 'lg' }}
-        style={{
-          background: 'rgba(255,255,255,0.85)',
-          border: '1px solid rgba(122,158,126,0.10)',
-        }}
+        className="petal-card"
       >
         <Stack gap="md">
           <Group gap={10} align="flex-end" wrap="nowrap">

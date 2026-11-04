@@ -113,7 +113,7 @@ export default async function CoachDashboardPage() {
                 radius="lg"
                 shadow="sm"
                 p="md"
-                style={{ background: 'rgba(255,255,255,0.88)', border: '1px solid rgba(122,158,126,0.10)' }}
+                className="petal-card"
               >
                 <Text fz="xs" c="sage.6" tt="uppercase" lts={2}>{s.label}</Text>
                 <Text
@@ -153,7 +153,7 @@ export default async function CoachDashboardPage() {
         )}
 
         {sorted.length === 0 ? (
-          <Card radius="lg" p="xl" style={{ background: 'rgba(255,255,255,0.85)' }}>
+          <Card radius="lg" p="xl" className="petal-card">
             <Text c="sage.7" ta="center">
               No clients linked yet. Share your coach ID with clients so they can connect.
             </Text>

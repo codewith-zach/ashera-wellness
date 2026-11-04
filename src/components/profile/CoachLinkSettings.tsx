@@ -48,7 +48,7 @@ export function CoachLinkSettings({ coach }: Props) {
   }
 
   return (
-    <Card radius="lg" p="lg" style={{ background: 'rgba(255,255,255,0.85)' }}>
+    <Card radius="lg" p="lg" className="petal-card">
       <Stack gap="md">
         <Stack gap={2}>
           <Text c="sage.7" ff="Playfair Display, serif" fz="lg" fw={500}>

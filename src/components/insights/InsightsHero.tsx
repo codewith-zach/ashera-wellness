@@ -44,11 +44,7 @@ export function InsightsHero({ summary }: { summary: Summary }) {
               radius="lg"
               shadow="sm"
               p={{ base: 'xs', sm: 'md' }}
-              style={{
-                background: 'rgba(255,255,255,0.88)',
-                border: '1px solid rgba(122,158,126,0.10)',
-                height: '100%',
-              }}
+              className="petal-card"
             >
               <Stack gap={2}>
                 {/* Short label on mobile */}

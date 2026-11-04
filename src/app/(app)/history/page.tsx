@@ -89,7 +89,7 @@ export default async function HistoryPage({
         <HistoryFilters months={months} month={month} mood={mood} />
 
         {view.length === 0 ? (
-          <Card radius="lg" p="xl" style={{ background: 'rgba(255,255,255,0.85)' }}>
+          <Card radius="lg" p="xl" className="petal-card">
             <Text c="sage.7" ta="center">
               No entries match those filters yet.
             </Text>

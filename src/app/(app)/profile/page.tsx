@@ -20,7 +20,7 @@ export default async function ProfilePage() {
         <Title order={1} ff="Playfair Display, serif" c="sage.7" fw={500}>
           Profile
         </Title>
-        <Card radius="lg" p="lg" style={{ background: 'rgba(255,255,255,0.85)' }}>
+        <Card radius="lg" p="lg" className="petal-card">
           <Stack gap="sm">
             <Group justify="space-between">
               <Text c="sage.6" fz="sm">
@@ -55,7 +55,7 @@ export default async function ProfilePage() {
 
         <CoachLinkSettings coach={withCoach?.coach ?? null} />
 
-        <Card radius="lg" p="lg" style={{ background: 'rgba(255,255,255,0.85)' }}>
+        <Card radius="lg" p="lg" className="petal-card">
           <Stack gap="sm">
             <Text c="sage.7" ff="Playfair Display, serif" fz="lg" fw={500}>
               Export your data

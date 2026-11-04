@@ -181,6 +181,157 @@ a {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
+/* ---- App shell surfaces (theme-aware) ---- */
+
+.app-header {
+  background: rgba(245, 240, 234, 0.82);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(122, 158, 126, 0.14);
+}
+
+.app-navbar {
+  background: #faf6f1;
+  border-right: 1px solid rgba(122, 158, 126, 0.12);
+}
+
+.nav-quote {
+  border-radius: 16px;
+  background: linear-gradient(140deg, rgba(122, 158, 126, 0.10), rgba(232, 196, 184, 0.12));
+  border: 1px solid rgba(122, 158, 126, 0.14);
+}
+
+/* ---- Dashboard hero band (theme-aware) ---- */
+
+.hero-band {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  padding: 28px 28px 26px;
+  background: linear-gradient(135deg, rgba(122, 158, 126, 0.16), rgba(232, 196, 184, 0.14) 55%, rgba(184, 174, 212, 0.12));
+  border: 1px solid rgba(122, 158, 126, 0.16);
+}
+.hero-band::after {
+  content: '✿';
+  position: absolute;
+  right: -14px;
+  bottom: -58px;
+  font-size: 220px;
+  line-height: 1;
+  opacity: 0.07;
+  pointer-events: none;
+}
+
+/* ================= Evening (dark) mode ================= */
+
+[data-mantine-color-scheme='dark'] body {
+  background: #141d16;
+  color: #dfe9e0;
+}
+
+[data-mantine-color-scheme='dark'] .cream-bg {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(232, 196, 184, 0.07), transparent 35%),
+    radial-gradient(circle at 95% 8%, rgba(184, 174, 212, 0.06), transparent 40%),
+    radial-gradient(circle at 50% 100%, rgba(122, 158, 126, 0.08), transparent 55%),
+    #141d16;
+}
+
+/* Remap the sage scale so c="sage.6/7/8" text becomes moonlit, while
+   lower indices become dark tints for chip/badge backgrounds.
+   html[data-…] outspecifies Mantine's :root declarations. */
+html[data-mantine-color-scheme='dark'] {
+  --mantine-color-sage-0: #1c281f;
+  --mantine-color-sage-1: #233227;
+  --mantine-color-sage-2: #2c4031;
+  --mantine-color-sage-3: #9dbfa2;
+  --mantine-color-sage-4: #8fb595;
+  --mantine-color-sage-5: #7a9e7e;
+  --mantine-color-sage-6: #aecbb2;
+  --mantine-color-sage-7: #cfe2d1;
+  --mantine-color-sage-8: #e3ede4;
+  --mantine-color-sage-9: #f0f7f1;
+  --mantine-color-sage-filled: #4a7050;
+  --mantine-color-sage-filled-hover: #5f8b66;
+  --mantine-color-rose-1: #3a2220;
+  --mantine-color-rose-6: #d99a91;
+  --mantine-color-gold-1: #362e1c;
+  --mantine-color-gold-6: #d4b57e;
+  --mantine-color-lavender-1: #292441;
+  --mantine-color-lavender-6: #c3bbe0;
+  --mantine-color-blush-1: #3d2b26;
+  --mantine-color-blush-6: #dcb0a3;
+}
+
+[data-mantine-color-scheme='dark'] .petal-card {
+  background: rgba(23, 32, 25, 0.75);
+  border-color: rgba(122, 158, 126, 0.18);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 10px 32px -14px rgba(0, 0, 0, 0.5);
+}
+
+[data-mantine-color-scheme='dark'] .lift-card:hover {
+  border-color: rgba(141, 185, 159, 0.4);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.25),
+    0 18px 44px -16px rgba(0, 0, 0, 0.6);
+}
+
+[data-mantine-color-scheme='dark'] .glass-card {
+  background: rgba(23, 32, 25, 0.72);
+  border-color: rgba(173, 200, 177, 0.16);
+}
+
+[data-mantine-color-scheme='dark'] .app-header {
+  background: rgba(18, 26, 20, 0.85);
+  border-bottom-color: rgba(122, 158, 126, 0.18);
+}
+
+[data-mantine-color-scheme='dark'] .app-navbar {
+  background: #171f19;
+  border-right-color: rgba(122, 158, 126, 0.14);
+}
+
+[data-mantine-color-scheme='dark'] .nav-quote {
+  background: linear-gradient(140deg, rgba(122, 158, 126, 0.14), rgba(232, 196, 184, 0.08));
+  border-color: rgba(122, 158, 126, 0.18);
+}
+
+[data-mantine-color-scheme='dark'] .hero-band {
+  background: linear-gradient(135deg, rgba(122, 158, 126, 0.18), rgba(232, 196, 184, 0.07) 55%, rgba(184, 174, 212, 0.08));
+  border-color: rgba(122, 158, 126, 0.2);
+}
+
+[data-mantine-color-scheme='dark'] .glass-card::before,
+[data-mantine-color-scheme='dark'] .cream-bg::before {
+  opacity: 0.25;
+}
+
+[data-mantine-color-scheme='dark'] ::selection {
+  background: rgba(141, 185, 159, 0.35);
+}
+
+/* Gradient buttons: keep deep sage + white text in the evening
+   (!important beats the inline background-image Mantine sets) */
+[data-mantine-color-scheme='dark'] .mantine-Button-root[data-variant='gradient'] {
+  background-image: linear-gradient(160deg, #5f8b66, #3a5a3f) !important;
+  color: #fff !important;
+}
+
+/* Recharts: soften grids and tick labels (CSS beats SVG attributes) */
+[data-mantine-color-scheme='dark'] .recharts-cartesian-grid line,
+[data-mantine-color-scheme='dark'] .recharts-polar-grid line,
+[data-mantine-color-scheme='dark'] .recharts-polar-grid path {
+  stroke: rgba(122, 158, 126, 0.16);
+}
+[data-mantine-color-scheme='dark'] .recharts-cartesian-axis-tick text,
+[data-mantine-color-scheme='dark'] .recharts-polar-angle-axis-tick text {
+  fill: #8db99f;
+}
+[data-mantine-color-scheme='dark'] .recharts-legend-item-text {
+  color: #aecbb2 !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .flame-icon { animation: none; }
   .lift-card {

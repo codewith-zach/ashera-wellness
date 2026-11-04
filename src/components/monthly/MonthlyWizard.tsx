@@ -219,7 +219,7 @@ export function MonthlyWizard({ monthNumber, year, month, setup }: Props) {
 
         <Progress value={progress} color="sage.5" radius="xl" size="sm" striped animated />
 
-        <Paper p={{ base: 'md', sm: 'xl' }} radius="lg" shadow="sm" style={{ background: 'rgba(255,255,255,0.92)' }}>
+        <Paper p={{ base: 'md', sm: 'xl' }} radius="lg" shadow="sm" className="petal-card">
           <AnimatePresence mode="wait">
             <motion.div
               key={step}

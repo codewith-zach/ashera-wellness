@@ -85,10 +85,7 @@ export function TodayStatusCard({ entry }: Props) {
       radius="lg"
       shadow="md"
       p={{ base: 'lg', sm: 'xl' }}
-      style={{
-        background: 'rgba(255,255,255,0.92)',
-        border: '1px solid rgba(122,158,126,0.10)',
-      }}
+      className="petal-card"
     >
       <Flex
         direction={{ base: 'column', sm: 'row' }}

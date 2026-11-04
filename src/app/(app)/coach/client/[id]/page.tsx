@@ -105,7 +105,7 @@ export default async function CoachClientPage({
               radius="lg"
               shadow="sm"
               p="md"
-              style={{ background: 'rgba(255,255,255,0.88)', border: '1px solid rgba(122,158,126,0.10)' }}
+              className="petal-card"
             >
               <Text fz="xs" c="sage.6" tt="uppercase" lts={2}>{s.label}</Text>
               <Text fz={24} fw={500} ff="Playfair Display, serif" c="sage.7">
@@ -136,11 +136,7 @@ export default async function CoachClientPage({
         {/* Heatmap */}
         <Box
           p="lg"
-          style={{
-            background: 'rgba(255,255,255,0.85)',
-            borderRadius: 20,
-            border: '1px solid rgba(122,158,126,0.10)',
-          }}
+          className="petal-card"
         >
           <Stack gap="md">
             <Title order={4} ff="Playfair Display, serif" c="sage.7" fw={500}>
@@ -166,7 +162,7 @@ export default async function CoachClientPage({
                   key={e.id}
                   radius="lg"
                   p="md"
-                  style={{ background: 'rgba(255,255,255,0.88)', border: '1px solid rgba(122,158,126,0.10)' }}
+                  className="petal-card"
                 >
                   <Group justify="space-between" wrap="nowrap">
                     <Stack gap={2}>

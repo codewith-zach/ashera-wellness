@@ -30,10 +30,7 @@ export function ChartCard({ title, hint, emoji, right, children }: Props) {
         radius="lg"
         shadow="sm"
         p="lg"
-        style={{
-          background: 'rgba(255,255,255,0.88)',
-          border: '1px solid rgba(122,158,126,0.10)',
-        }}
+        className="petal-card"
       >
         <Stack gap="md">
           <Group justify="space-between" align="flex-end">
